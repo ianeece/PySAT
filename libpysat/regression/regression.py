@@ -121,6 +121,11 @@ class regression:
             else:
                 print('Model failed to train!')
                 traceback.print_stack()
+            if np.isnan(x).any() == True:
+                print('Non-numeric value(s) in x.')
+            if np.isnan(y).any() == True:
+                print('Non-numeric value(s) in y.')
+
 
         if self.ransac:
             self.outliers = np.logical_not(self.model.inlier_mask_)

@@ -114,7 +114,6 @@ class regression:
         try:
             self.model.fit(x, y)
             self.goodfit = True
-            #print(self.model)
         except:
             self.goodfit = False
             if self.method[i] == 'GP':

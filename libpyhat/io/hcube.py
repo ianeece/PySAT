@@ -80,8 +80,10 @@ class HCube(object):
         ----------
         how : function
               Function to apply across along axises of the hcube
+
         axis : tuple
                List of axis to apply a given function along
+
         Returns
         -------
         new_hcube : Object
@@ -97,21 +99,29 @@ class HCube(object):
         """
         Parameters
         ----------
+
         nodes : list
                 A list of wavelengths for the continuum to be corrected along
+
         correction_nodes : list
                            A list of nodes to limit the correction between
+
         correction : function
                      Function specifying the type of correction to perform
                      along the continuum
+
         axis : int
                Axis to apply the continuum correction on
+
         adaptive : boolean
                    ?
+
         window : int
                  ?
+
         Returns
         -------
+
         new_hcube : Object
                     A new hcube object with the corrected dataset
         """
@@ -129,17 +139,23 @@ class HCube(object):
         """
         Parameters
         ----------
+
         x : tuple
             Lower and upper bound along the x axis for clipping
+
         y : tuple
             Lower and upper bound along the y axis for clipping
+
         band : tuple
                Lower and upper band along the z axis for clipping
+
         tolerance : int
                     Tolerance given for trying to find wavelengths
                     between the upper and lower bound
+
         Returns
         -------
+
         new_hcube : Object
                     A new hcube object with the clipped dataset
         """

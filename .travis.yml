@@ -1,16 +1,16 @@
 language: generic
 
 env:
-  - PYTHON_VERSION=3.5
-  - PYTHON_VERSION=3.6
+  - PYTHON_VERSION=3.7
+  - PYTHON_VERSION=3.8
 os:
   - linux
   - osx
 
 branches:
-only:
-  - dev
-  - master
+  only:
+    - dev
+    - master
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" == "linux" ]; then
@@ -27,9 +27,8 @@ before_install:
   - conda update -q conda
   - conda info -a   # Useful for debugging any issues with conda
   # Create the env
-  - conda env create -q -f environment.yml -n test_env python=$PYTHON_VERSION
+  - conda env create -f environment.yml -n test_env python=$PYTHON_VERSION
   - source activate test_env
-
 
 install:
   # Install dependencies
@@ -41,8 +40,6 @@ install:
   # Development installation
   - conda install --quiet pytest pytest-cov nbsphinx
   - pip install coveralls travis-sphinx
-  - conda env update -n test_env -f environment.yml
-
 
 script:
   - pytest --cov=libpyhat
@@ -50,18 +47,24 @@ script:
 after_success:
   # Code Coverage
   - coveralls
-  # Anaconda Upload
-  - conda deactivate
-  - conda install conda-build anaconda-client
-  - conda config --set anaconda_upload no
-  - conda build recipe -q
-  - builddir=(`conda build recipe --output`)
-  - |
-    if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
-        anaconda -t="$CONDA_UPLOAD_TOKEN" upload $builddir --force;
-      fi
-    fi
-  # Docs to gh-pages
-  - source activate test_env  # Reactivate the env to have all deps installed.
-  - travis-sphinx build --source=docs --nowarn # The sphinx build script
-  - travis-sphinx deploy --branches=master
+  # # Anaconda Upload
+  # - conda deactivate
+  # - conda install conda-build anaconda-client
+  # - conda config --set anaconda_upload no
+  # - conda build recipe
+  # - builddir=(`conda build recipe --output`)
+  # - |
+  #   if [ "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false" ]; then
+  #       anaconda -t="$CONDA_UPLOAD_TOKEN" upload $builddir --force;
+  #   fi
+  # # Docs to gh-pages
+  # - source activate test_env  # Reactivate the env to have all deps installed.
+  # - travis-sphinx build --source=docs --nowarn # The sphinx build script
+  # - travis-sphinx deploy --branches=master
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: ./deploy.sh
+  on:
+    branch: master

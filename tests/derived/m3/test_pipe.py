@@ -1,19 +1,7 @@
 import pytest
 import numpy as np
 
-from libpysat.derived.m3 import pipe
-
-def test_onenum_min(m3_img):
-    res = pipe.oneum_min(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[ 0.      , -0.928571, -1.793103],
-                                                        [-2.6     , -3.354839, -4.0625  ],
-                                                        [-4.727273, -5.352941, -5.942857]]))
-
-def test_onenum_sym(m3_img):
-    res = pipe.oneum_sym(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[-0.071429, -0.075775, -0.080215],
-                                                        [-0.084746, -0.089363, -0.094064],
-                                                        [-0.098845, -0.103703, -0.108634]]))
+from libpyhat.derived.m3 import pipe
 
 def test_bd620(m3_img):
     res = pipe.bd620(m3_img)
@@ -50,6 +38,11 @@ def test_bd2300(m3_img):
     np.testing.assert_array_almost_equal(res, np.array([[0.28366762,  0.26470588,  0.2481203 ],
                                                         [0.23349057,  0.22048998,  0.20886076],
                                                         [0.19839679,  0.1889313,   0.18032787]]))
+def test_bd2800(m3_img):
+    res = pipe.bd2800(m3_img)
+    np.testing.assert_array_almost_equal(res, np.array([[-0.143911, -0.129139, -0.117117],
+                                                        [-0.107143, -0.098734, -0.091549],
+                                                        [-0.085339, -0.079918, -0.075145]]))
 
 def test_bd3000(m3_img):
     res = pipe.bd3000(m3_img)
@@ -66,12 +59,6 @@ def test_r950_750(m3_img):
     np.testing.assert_array_almost_equal(res, np.array([[10., 5.5, 4.],
                                                         [3.25, 2.8, 2.5],
                                                         [2.28571429, 2.125, 2.]]))
-
-def test_hlnd_isfeo(m3_img):
-    res = pipe.hlnd_isfeo(m3_img)
-    np.testing.assert_allclose(res, np.array([[  1.273581e+13,   3.031358e+12,   9.165291e+11],
-                                           [  3.331018e+11,   1.398953e+11,   6.595778e+10],
-                                           [  3.416221e+10,   1.911789e+10,   1.141158e+10]]), rtol=1e+11)
 
 def test_olindex(m3_img):
     res = pipe.olindex(m3_img)
@@ -100,44 +87,26 @@ def test_r2780(m3_img):
     res = pipe.r2780(m3_img)
     np.testing.assert_array_almost_equal(res, np.arange(1,10).reshape((3,3)))
 
-def test_thermal_ratio(m3_img):
-    res = pipe.thermal_ratio(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[0.1, 0.18181818, 0.25],
-                                                        [0.30769231, 0.35714286, 0.4],
-                                                        [0.4375, 0.47058824, 0.5]]))
-
-def test_thermal_slope(m3_img):
-    res = pipe.thermal_slope(m3_img)
-    delta = np.abs(np.sum(res - 0.02045455))
-    assert delta <= 1e-6
-
 def test_twoum_ratio(m3_img):
     res = pipe.twoum_ratio(m3_img)
     np.testing.assert_array_almost_equal(res, np.array([[0.1, 0.18181818, 0.25],
                                                         [0.30769231, 0.35714286, 0.4],
                                                         [0.4375, 0.47058824, 0.5]]))
 
+def test_thermal_ratio(m3_img):
+    res = pipe.thermal_ratio(m3_img)
+    np.testing.assert_array_almost_equal(res, np.array([[0.1, 0.18181818, 0.25],
+                                                        [0.30769231, 0.35714286, 0.4],
+                                                        [0.4375, 0.47058824, 0.5]]))
 def test_twoum_slope(m3_img):
     res = pipe.twoum_slope(m3_img)
     delta = np.abs(np.sum(res - 0.009375))
     assert delta <= 1e-6
 
-def test_uvvis(m3_img):
-    res = pipe.uvvis(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[0.1, 0.18181818, 0.25],
-                                                        [0.30769231, 0.35714286, 0.4],
-                                                        [0.4375, 0.47058824, 0.5]]))
-
 def test_visslope(m3_img):
     res = pipe.visslope(m3_img)
     delta = np.abs(np.sum(res - 0.02727273))
     assert delta <= 1e-6
-
-def test_visuv(m3_img):
-    res = pipe.visuv(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[ 10., 5.5, 4.],
-                                                        [3.25, 2.8, 2.5],
-                                                        [2.28571429, 2.125, 2.]]))
 
 def test_visnir(m3_img):
     res = pipe.visnir(m3_img)
@@ -156,45 +125,3 @@ def test_bdi2000(m3_img):
     np.testing.assert_array_almost_equal(res, np.array([[-0.026842, -0.024199, -0.022029],
                                                         [-0.020215, -0.018677, -0.017356],
                                                         [-0.016209, -0.015204, -0.014316]]))
-
-
-def test_bd1umratio(m3_img):
-    res = pipe.bd1umratio(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[0.26226209, 0.25687621, 0.25256142],
-                                                        [0.2490271, 0.24607906, 0.2435826],
-                                                        [0.24144133, 0.23958448, 0.23795892]]))
-
-
-def test_nbd1400(m3_img):
-    res = pipe.nbd1400(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[0.52941176, 0.50561798, 0.48387097],
-                                                        [0.46391753, 0.44554455, 0.42857143],
-                                                        [0.41284404, 0.39823009, 0.38461538]]))
-
-def test_nbd1480(m3_img):
-    res = pipe.nbd1480(m3_img)
-    np.testing.assert_array_almost_equal(res, np.zeros((3,3)))
-
-def test_nbd2300(m3_img):
-    res = pipe.nbd2300(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[-1.86206897, -1.74193548, -1.63636364],
-                                                        [-1.54285714, -1.45945946, -1.38461538],
-                                                        [-1.31707317, -1.25581395, -1.2]]))
-
-def test_nbd2700(m3_img):
-    res = pipe.nbd2700(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[-2.25, -2.04545455, -1.875],
-                                                        [-1.73076923, -1.60714286, -1.5],
-                                                        [-1.40625, -1.32352941, -1.25]]))
-
-def test_nbd2850(m3_img):
-    res = pipe.nbd2850(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[-2.7, -2.45454545, -2.25],
-                                                        [-2.07692308, -1.92857143, -1.8],
-                                                        [-1.6875, -1.58823529, -1.5]]))
-
-def test_bd2umratio(m3_img):
-    res = pipe.bd2umratio(m3_img)
-    np.testing.assert_array_almost_equal(res, np.array([[-0.53008299, -0.5037594,  -0.48195876],
-                                                        [-0.46360759, -0.44794721, -0.43442623],
-                                                        [-0.42263427, -0.41225962, -0.40306122]]))

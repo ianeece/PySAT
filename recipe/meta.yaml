@@ -1,36 +1,47 @@
-{% set version = "0.1.0" %}
+{% set version = "0.1.6" %}
 
 package:
-  name: pysat
+  name: pyhat
   version: {{ version }}
 
 source:
-  git_url: https://github.com/USGS-Astrogeology/PySAT
-  git_rev: dev
+  git_url: https://github.com/USGS-Astrogeology/PyHAT
+  git_rev: master
 
 build:
-  number: 2
+  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0) }}
   skip: True  # [not py3k]
-  
+
 requirements:
   build:
-    - python
-    - setuptools
-    - numpy >=1.10
-    - scipy
-    - plio
+    - python x.x
+    - numpy>=1.18
     - pandas
+    - scipy
+    - scikit-learn
+    - multipledispatch
+    - yaml
+    - pvl
+    - plio
+    - matplotlib
+    - pywavelets
   run:
-    - python
-    - numpy >=1.10
-    - scipy
-    - plio
+    - python x.x
+    - numpy>=1.18
     - pandas
+    - scipy
+    - scikit-learn
+    - multipledispatch
+    - yaml
+    - pvl
+    - plio
+    - matplotlib
+    - pywavelets
 
 test:
   imports:
-    - libpysat
+    - libpyhat
 
 about:
-  home: https://github.com/USGS-Astrogeology/PySAT
+  home: https://github.com/USGS-Astrogeology/PyHAT
   license: Unlicense

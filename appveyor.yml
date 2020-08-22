@@ -1,15 +1,16 @@
 branches:
   only:
-  - master
-  - dev
+    - master
+    - dev
+
 version: '0.1.0.{build}'
 
 environment:
   matrix:
-    - PYTHON: "C:\\Miniconda35-x64\\Scripts\\activate.bat"
-      PYTHON_VERSION: 3.5
-    - PYTHON: "C:\\Miniconda36-x64\\Scripts\\activate.bat"
-      PYTHON_VERSION: 3.6
+    - PYTHON: "C:\\Miniconda3-x64\\Scripts\\activate.bat"
+      PYTHON_VERSION: 3.7
+    - PYTHON: "C:\\Miniconda3-x64\\Scripts\\activate.bat"
+      PYTHON_VERSION: 3.8
 
 platform:
   - x64
@@ -18,15 +19,12 @@ configuration:
   - Release
 
 install:
-  - cmd: call %PYTHON%
+  - cmd: set PATH="C:\\Miniconda3-x64\\Scripts\\";"C:\\Miniconda3-x64\\";%PATH%
   - cmd: conda config --set always_yes yes --set changeps1 no
   - cmd: conda update -q conda
-  - cmd: conda install conda-build anaconda-client 
-  - cmd: conda create -q -n test_env python=%PYTHON_VERSION%
+  - cmd: conda config --set ssl_verify false
+  - cmd: conda env create -f environment.yml -n test_env python=$env:PYTHON_VERSION
   - cmd: activate test_env
-  - cmd: conda config --add channels conda-forge
-  - cmd: conda install -c conda-forge numpy scipy pandas gdal scikit-learn multipledispatch pvl
-  - cmd: conda install -c usgs-astrogeology plio
   - cmd: conda install pytest-cov
   # https://pythonhosted.org/CodeChat/appveyor.yml.html
   - cmd: python -m pip install -U pip
@@ -34,11 +32,23 @@ install:
 
 build_script:
   - cmd: python setup.py install
-  
+
 test_script:
-  - cmd: pytest libpysat/
+  - cmd: pytest libpyhat/
+
+before_deploy:
+  - cmd: activate base
+
+deploy_script:
+  ps:
+    if (-not ($env:APPVEYOR_PULL_REQUEST_NUMBER)) {
+      if ($env:APPVEYOR_REPO_BRANCH -eq "master") {
+          conda install conda-build anaconda-client;
+          conda config --set anaconda_upload yes;
+          conda build -c conda-forge -c usgs-astrogeology --python $env:PYTHON_VERSION --token %CONDA_UPLOAD_TOKEN% RECIPE_PATH recipe;
+          conda build purge;
+      };
+    };
 
 on_success:
-  - cmd: deactivate
-  - cmd: conda config --set anaconda_upload yes
-  - cmd: conda build --token %CONDA_UPLOAD_TOKEN% --channel conda-forge --channel usgs-astrogeology .
+  - ps: echo "Success!"

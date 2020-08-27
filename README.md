@@ -30,3 +30,6 @@
 
   - Execute the `jupyter notebook` that will open a new browser tab with the Jupyter homepage.
   - Launch (click) the `Kaguya_Spectral_Profiler.ipynb` notebook.
+  
+# QGIS Plugin
+  - A QGIS plugin is available [here](https://github.com/USGS-Astrogeology/pyhat_qgis).  This plugin allows users to create and view derived products using QGIS rather than a native Python environment.

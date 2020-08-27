@@ -25,21 +25,27 @@ def peak_area(df, peaks_mins_file=None):
         mins = wvls[sp.signal.argrelextrema(ave_spect, np.less)[0]]  # find the maxima in the average spectrum
 
     spectra = np.array(df['wvl'])
+
     for i in range(len(peaks)):
 
         # get the wavelengths between two minima
         try:
             low = mins[np.where(mins < peaks[i])[0][-1]]
+
         except:
             low = mins[0]
 
         try:
             high = mins[np.where(mins > peaks[i])[0][0]]
+
         except:
             high = mins[-1]
 
-        peak_indices = np.all((wvls >= low, wvls < high), axis=0)
+        #subtract a small amount from each to avoid rounding errors causing issues
+        low = low - 0.00001*low
+        high = high - 0.00001*high
 
+        peak_indices = np.all((wvls >= low, wvls < high), axis=0)
         df[('peak_area', peaks[i])] = spectra[:, peak_indices].sum(axis=1)
 
     return df, peaks, mins

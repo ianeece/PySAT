@@ -51,6 +51,19 @@ class sm:
                 else:
                     pass
                 i=i+1
+            print(' ')
+            print('Optimum settings:')
+            print('RMSE = ' + str(self.rmse))
+            print('Low model: ' + str(round(self.blendranges[0], 4)) + ' to ' + str(round(self.blendranges[2], 4)))
+            i = 1
+            m = 2
+            while i + 3 < len(self.blendranges) - 1:
+                print('Submodel ' + str(m) + ': ' + str(round(self.blendranges[i], 4)) + ' to ' + str(
+                    round(self.blendranges[i + 3], 4)))
+                i = i + 2
+                m = m + 1
+            print('High model: ' + str(round(self.blendranges[-3], 4)) + ' to ' + str(round(self.blendranges[-1], 4)))
+
         else:
             self.blendranges = blendranges
 
@@ -68,14 +81,14 @@ class sm:
         blended = self.submodels_blend(predictions, blendranges, overwrite=False)
         RMSE = np.sqrt(np.mean((blended - truevals) ** 2))  # calculate the RMSE
         print('RMSE = '+str(RMSE))
-        print('Low model: '+str(round(blendranges[0],2))+' to '+str(round(blendranges[2],2)))
+        print('Low model: '+str(round(blendranges[0],4))+' to '+str(round(blendranges[2],4)))
         i=1
         m=2
         while i+3<len(blendranges)-1:
-            print('Submodel '+str(m)+': '+str(round(blendranges[i],2))+' to '+str(round(blendranges[i+3],2)))
+            print('Submodel '+str(m)+': '+str(round(blendranges[i],4))+' to '+str(round(blendranges[i+3],4)))
             i=i+2
             m=m+1
-        print('High model: '+str(round(blendranges[-3],2)) + ' to ' + str(round(blendranges[-1],2)))
+        print('High model: '+str(round(blendranges[-3],4)) + ' to ' + str(round(blendranges[-1],4)))
 
         return RMSE
         

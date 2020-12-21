@@ -31,19 +31,16 @@ class sm:
         # If the true compositions are provided, then optimize the ranges over which the results are blended to minimize the RMSEC
         blendranges = np.array(self.blendranges).flatten()  # squash the ranges to be a 1d array
         blendranges.sort()  # sort the entries. These will be used by submodels_blend to decide how to combine the predictions
+        self.blendranges = blendranges
         if truevals is not None:
             self.rmse = 99999999
             n_opt = 5
             i=0
             while i < n_opt:
-                #print('Optimizing blending ranges, round #'+str(i))
                 truevals = np.squeeze(np.array(truevals))
-                result = opt.minimize(self.get_rmse, blendranges, (predictions, truevals))
+                result = opt.minimize(self.get_rmse, blendranges, (predictions, truevals), tol=0.00001)
 
                 if result.fun < self.rmse:
-                    # ranges_temp = np.hstack((result.x, result.x[1:-1]))
-                    # ranges_temp.sort()
-                    # ranges_temp = np.reshape(ranges_temp, (int(len(ranges_temp) / 2), int(2)))
                     self.blendranges = result.x
                     self.rmse = result.fun
                     print(self.blendranges.sort())

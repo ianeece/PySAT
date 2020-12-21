@@ -4,6 +4,7 @@ from sklearn.manifold.t_sne import TSNE
 from sklearn.manifold.locally_linear import LocallyLinearEmbedding
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.decomposition import NMF
+from libpyhat.transform.dim_reductions.mnf import MNF
 #This function does dimensionality reduction on a data frame full of spectra. A number of different methos can be chosen
 
 def dim_red(df, xcol, method, params, kws, load_fit=None, ycol=None):
@@ -24,11 +25,13 @@ def dim_red(df, xcol, method, params, kws, load_fit=None, ycol=None):
     if method == 'NMF':
         add_const = kws.pop('add_constant')
         do_dim_red = NMF(*params, **kws)
+    if method == 'MNF':
+        do_dim_red = MNF(*params, **kws)
 
     if load_fit:
         do_dim_red = load_fit
     else:
-        if method != 't-SNE':
+        if method not in ['t-SNE','MNF']:
             if ycol is not None:
                 #find the multi-index that matches the specified single index
                 ycol_tuple = [a for a in df.columns.values if ycol in a][0]
@@ -45,7 +48,10 @@ def dim_red(df, xcol, method, params, kws, load_fit=None, ycol=None):
                 do_dim_red.fit(xdata)
             dim_red_result = do_dim_red.transform(xdata)
         else:
-            dim_red_result = do_dim_red.fit_transform(xdata)
+            if method == 't-SNE':
+                dim_red_result = do_dim_red.fit_transform(xdata)
+            if method == 'MNF':
+                dim_red_result, mnf_spectra = do_dim_red.fit_transform(xdata)
 
     for i in list(range(1, dim_red_result.shape[
                                1] + 1)):  # will need to revisit this for other methods that don't use n_components to make sure column names still mamke sense

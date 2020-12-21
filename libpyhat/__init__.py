@@ -10,3 +10,4 @@ from libpyhat import io
 from libpyhat.data.spectra import Spectra
 from libpyhat.data.spectrum import Spectrum
 from libpyhat.transform import continuum
+#from libpyhat import elmm_master

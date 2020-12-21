@@ -3,7 +3,7 @@
 import copy
 import traceback
 import numpy as np
-from sklearn.linear_model import LassoCV
+from sklearn.linear_model import LassoCV, ElasticNetCV
 from sklearn.neighbors import NearestNeighbors
 from sklearn.model_selection import GroupKFold
 
@@ -22,8 +22,8 @@ class LocalRegression:
                       unknown spectrum.
 
         """
-        self.model = LassoCV(**params) # For now, the only option is LASSO. Other methods to be added in the future
-                                       # params is a dict containing the keywords and parameters for LassoCV
+        self.model = ElasticNetCV(**params) # For now, the only option is Elastic Net. Other methods to be added in the future
+                                       # params is a dict containing the keywords and parameters for ElasticNetCV
 
         self.neighbors = NearestNeighbors(n_neighbors=n_neighbors)
 

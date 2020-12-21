@@ -29,7 +29,7 @@ def dim_red(df, xcol, method, params, kws, load_fit=None, ycol=None):
         do_dim_red = load_fit
     else:
         if method != 't-SNE':
-            if ycol != None:
+            if ycol is not None:
                 #find the multi-index that matches the specified single index
                 ycol_tuple = [a for a in df.columns.values if ycol in a][0]
                 ydata = df[ycol_tuple]

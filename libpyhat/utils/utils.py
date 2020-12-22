@@ -250,7 +250,7 @@ def rows_match(df, column_name, isin_array, invert=False):
         new_df = df.loc[df[column_name].isin(isin_array)]
     return new_df
 
- # This function takes the sum of data over two specified wavelength ranges,
+# This function takes the sum of data over two specified wavelength ranges,
 # calculates the ratio of the sums, and adds the ratio as a column in the data frame
 def ratio(df, range1, range2, rationame=''):
     cols = df['wvl'].columns.values
@@ -280,7 +280,7 @@ def enumerate_duplicates(df, col):
     rows = np.array(rows)
     rows_list = list(rows)
     for i in unique_rows:
-        if i is not '-':
+        if i != '-':
             matchindex = np.where(rows == i)[0]
 
             if len(matchindex) > 1:
@@ -289,3 +289,4 @@ def enumerate_duplicates(df, col):
 
     df[('meta', col)] = rows_list
     return df
+

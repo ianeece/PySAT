@@ -20,6 +20,7 @@ def outlier_removal(df, col, method, params):
         df[('meta', 'Outliers - ' + method + str(params))] = is_outlier
     if method == 'Local Outlier Factor':
         is_outlier = do_outlier_removal.fit_predict(np.array(df[col]))
-        df[('meta', 'Outliers - ' + method + str(params))] = is_outlier
         df[('meta', 'Outlier Factor - ' + method + str(params))] = do_outlier_removal.negative_outlier_factor_
+        df[('meta', 'Outliers - ' + method + str(params))] = is_outlier
+        
     return df

@@ -1,6 +1,6 @@
 from bin.jade import JADE
 from sklearn.decomposition import PCA, FastICA
-from sklearn.manifold.t_sne import TSNE
+from sklearn.manifold import TSNE
 from sklearn.manifold.locally_linear import LocallyLinearEmbedding
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.decomposition import NMF

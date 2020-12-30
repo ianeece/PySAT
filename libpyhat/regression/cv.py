@@ -15,7 +15,7 @@ import pandas as pd
 from libpyhat.regression.regression import regression
 from libpyhat.regression import local_regression
 from sklearn.linear_model import enet_path, lasso_path
-from sklearn.linear_model.base import _pre_fit
+from sklearn.linear_model._base import _pre_fit
 from sklearn.utils.validation import check_X_y, check_array
 warnings.filterwarnings('ignore')
 import time

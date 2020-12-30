@@ -25,60 +25,60 @@ from sklearn.model_selection import LeaveOneGroupOut
 def RMSE(ypred, y):
     return np.sqrt(np.mean((np.squeeze(ypred) - np.squeeze(y)) ** 2))
 
-def path_calc(X, y, X_holdout, y_holdout, alphas, paramgrid, colname = 'CV', yname = '', method = 'Elastic Net'):
-    #make a copy of the parameters before popping things off
-    copy_params = copy.deepcopy(paramgrid)
-    fit_intercept = copy_params.pop('fit_intercept')
-    precompute = copy_params.pop('precompute')
-    copy_X = copy_params.pop('copy_X')
-    normalize = False
+# def path_calc(X, y, X_holdout, y_holdout, alphas, paramgrid, colname = 'CV', yname = '', method = 'Elastic Net'):
+#     #make a copy of the parameters before popping things off
+#     copy_params = copy.deepcopy(paramgrid)
+#     fit_intercept = copy_params.pop('fit_intercept')
+#     precompute = copy_params.pop('precompute')
+#     copy_X = copy_params.pop('copy_X')
+#     normalize = False
 
-    # this code adapted from sklearn ElasticNet fit function, which unfortunately doesn't accept multiple alphas at once
-    X, y = check_X_y(X, y, accept_sparse='csc',
-                     order='F', dtype=[np.float64, np.float32],
-                     copy=copy_X and fit_intercept,
-                     multi_output=True, y_numeric=True)
-    y = check_array(y, order='F', copy=False, dtype=X.dtype.type,
-                    ensure_2d=False)
+#     # this code adapted from sklearn ElasticNet fit function, which unfortunately doesn't accept multiple alphas at once
+#     X, y = check_X_y(X, y, accept_sparse='csc',
+#                      order='F', dtype=[np.float64, np.float32],
+#                      copy=copy_X and fit_intercept,
+#                      multi_output=True, y_numeric=True)
+#     y = check_array(y, order='F', copy=False, dtype=X.dtype.type,
+#                     ensure_2d=False)
 
-    #this is the step that gives the data to find intercept if fit_intercept is true.
-    X, y, X_offset, y_offset, X_scale, precompute, Xy = _pre_fit(X, y, None, precompute, normalize,
-                                                                 fit_intercept, copy=False)
-    y = np.squeeze(y)
+#     #this is the step that gives the data to find intercept if fit_intercept is true.
+#     X, y, X_offset, y_offset, X_scale, precompute, Xy = _pre_fit(X, y, None, precompute, normalize,
+#                                                                  fit_intercept, copy=False)
+#     y = np.squeeze(y)
 
-    #do the path calculation, and tell how long it took
-    print('Calculating path...')
-    start_t = time.time()
-    if method == 'Elastic Net':
-        path_alphas, path_coefs, path_gaps, path_iters = enet_path(X, y, alphas=alphas, return_n_iter = True,
-                                                   **copy_params)
-    if method == 'LASSO':
-        path_alphas, path_coefs, path_gaps, path_iters = lasso_path(X, y, alphas=alphas, return_n_iter=True,
-                                                                   **copy_params)
-    dt = time.time() - start_t
-    print('Took ' + str(round(dt,2)) + ' seconds')
+#     #do the path calculation, and tell how long it took
+#     print('Calculating path...')
+#     start_t = time.time()
+#     if method == 'Elastic Net':
+#         path_alphas, path_coefs, path_gaps, path_iters = enet_path(X, y, alphas=alphas, return_n_iter = True,
+#                                                    **copy_params)
+#     if method == 'LASSO':
+#         path_alphas, path_coefs, path_gaps, path_iters = lasso_path(X, y, alphas=alphas, return_n_iter=True,
+#                                                                    **copy_params)
+#     dt = time.time() - start_t
+#     print('Took ' + str(round(dt,2)) + ' seconds')
 
-    #create some empty arrays to store the result
-    y_pred_holdouts = np.empty(shape=(len(alphas),len(y_holdout)))
-    intercepts = np.empty(shape=(len(alphas)))
-    rmses = np.empty(shape=(len(alphas)))
-    cvcols = []
-    for j in list(range(len(path_alphas))):
+#     #create some empty arrays to store the result
+#     y_pred_holdouts = np.empty(shape=(len(alphas),len(y_holdout)))
+#     intercepts = np.empty(shape=(len(alphas)))
+#     rmses = np.empty(shape=(len(alphas)))
+#     cvcols = []
+#     for j in list(range(len(path_alphas))):
 
-        coef_temp = path_coefs[:, j]
+#         coef_temp = path_coefs[:, j]
 
-        if fit_intercept:
-            coef_temp = coef_temp / X_scale
-            intercept = y_offset - np.dot(X_offset, coef_temp.T)
-        else:
-            intercept = 0.
+#         if fit_intercept:
+#             coef_temp = coef_temp / X_scale
+#             intercept = y_offset - np.dot(X_offset, coef_temp.T)
+#         else:
+#             intercept = 0.
 
-        y_pred_holdouts[j,:] = np.dot(X_holdout, path_coefs[:, j]) + intercept
-        intercepts[j] = intercept
-        rmses[j] = RMSE(y_pred_holdouts[j,:], y_holdout)
-        cvcols.append(('predict','"'+ method + ' - ' + yname + ' - ' + colname + ' - Alpha:' + str(path_alphas[j]) + ' - ' + str(paramgrid) + '"'))
+#         y_pred_holdouts[j,:] = np.dot(X_holdout, path_coefs[:, j]) + intercept
+#         intercepts[j] = intercept
+#         rmses[j] = RMSE(y_pred_holdouts[j,:], y_holdout)
+#         cvcols.append(('predict','"'+ method + ' - ' + yname + ' - ' + colname + ' - Alpha:' + str(path_alphas[j]) + ' - ' + str(paramgrid) + '"'))
 
-    return path_alphas, path_coefs, intercepts, path_iters, y_pred_holdouts, rmses, cvcols
+#     return path_alphas, path_coefs, intercepts, path_iters, y_pred_holdouts, rmses, cvcols
 
 
 class cv:
@@ -144,22 +144,23 @@ class cv:
                 cv_holdout = Train.iloc[holdout]  # extract the data that will be held out of the model
 
                 if calc_path:
-                    # get X and y data
-                    X = cv_train[xcols]
-                    y = cv_train[ycol]
+                    print('Path calculation implementation is buggy and is currently disabled')
+#                     # get X and y data
+#                     X = cv_train[xcols]
+#                     y = cv_train[ycol]
 
-                    #do the path calculation
-                    path_alphas,\
-                    path_coefs,\
-                    intercepts,\
-                    path_n_iters,\
-                    y_pred_holdouts,\
-                    fold_rmses,\
-                    cvcols = path_calc(X, y, cv_holdout[xcols], cv_holdout[ycol], alphas, self.paramgrid[i], yname = ycol[0][-1], method = method)
+#                     #do the path calculation
+#                     path_alphas,\
+#                     path_coefs,\
+#                     intercepts,\
+#                     path_n_iters,\
+#                     y_pred_holdouts,\
+#                     fold_rmses,\
+#                     cvcols = path_calc(X, y, cv_holdout[xcols], cv_holdout[ycol], alphas, self.paramgrid[i], yname = ycol[0][-1], method = method)
 
-                    output_tmp['Fold '+str(foldcount)] = fold_rmses
-                    for n in list(range(len(path_alphas))):
-                        Train.at[Train.index[holdout], cvcols[n]] = y_pred_holdouts[n]
+#                     output_tmp['Fold '+str(foldcount)] = fold_rmses
+#                     for n in list(range(len(path_alphas))):
+#                         Train.at[Train.index[holdout], cvcols[n]] = y_pred_holdouts[n]
 
                 else:
 

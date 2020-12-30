@@ -15,7 +15,6 @@ def test_spectral():
                 'n_neighbors': 5,
                 'degree': 3,
                 'coef0': 1,
-                'n_jobs':1,
                 'random_state':1}
     result = cluster.cluster(df, 'wvl', 'Spectral', [], kws)
     clusters = np.squeeze(np.array(result['Spectral']))

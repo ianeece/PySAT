@@ -1,7 +1,7 @@
 from bin.jade import JADE
 from sklearn.decomposition import PCA, FastICA
 from sklearn.manifold import TSNE
-from sklearn.manifold.locally_linear import LocallyLinearEmbedding
+from sklearn.manifold import LocallyLinearEmbedding
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.decomposition import NMF
 #This function does dimensionality reduction on a data frame full of spectra. A number of different methos can be chosen

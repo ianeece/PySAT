@@ -14,7 +14,7 @@ dependencies:
   - plio
   - matplotlib
   - pywavelets
-  - gdal
+  - osgeo
   - pip
   - pip:
     - pysptools

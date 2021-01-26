@@ -1,8 +1,5 @@
 import numpy as np
-try:
-    from osgeo import gdal
-except ImportError:
-    import gdal
+import gdal
 
 from plio.utils.indexing import _LocIndexer, _iLocIndexer
 from .. transform.continuum import continuum_correction

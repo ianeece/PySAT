@@ -183,5 +183,3 @@ def test_KRR():
     rmse = np.sqrt(np.average((prediction - y) ** 2))
     expected = 26.299088128039653
     np.testing.assert_almost_equal(rmse, expected,decimal=5)
-
-test_OLS()

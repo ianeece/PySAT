@@ -14,11 +14,11 @@ def test_local_regression():
               'max_iter': 2000,
               'selection': 'random'
               }
-    model = local_regression.LocalRegression(params, n_neighbors=10)
+    model = local_regression.LocalRegression(params, n_neighbors=10, verbose=False)
     predictions, coeffs, intercepts = model.fit_predict(df['wvl'],df[('comp','SiO2')],df['wvl'])
-    expected_rmse = 3.68281553418475
-    expected_coefs = [ 0.06575656, 0.08675752, 0.04731151, 0.02209511, -0.00427306]
-    expected_intercepts = [91.82150159555815, 20.29345787935364, 22.16812754981876, 47.349919072649534, 70.71488259124698]
+    expected_rmse = 3.6651844609454796
+    expected_coefs = [ 0.06578675, 0.086692, 0.04730609, 0.02218215, -0.0043394]
+    expected_intercepts = [91.78926076797339, 20.04199177586427, 24.5343744038724, 44.61417574720293, 70.67902610266518]
 
     rmse = np.sqrt(np.average((predictions - df[('comp','SiO2')])**2))
     np.testing.assert_almost_equal(rmse,expected_rmse)
@@ -26,5 +26,3 @@ def test_local_regression():
     np.testing.assert_array_almost_equal(expected_coefs, np.array(coeffs)[10,5:10])
     assert np.array(intercepts).shape[0] == 103
     np.testing.assert_array_almost_equal(intercepts[0:5], expected_intercepts)
-
-

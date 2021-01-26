@@ -5,7 +5,7 @@ from . hcube import HCube
 from .. derived import crism
 from .. derived.utils import get_derived_funcs
 
-import gdal
+from osgeo import gdal
 
 
 class Crism(GeoDataset, HCube):

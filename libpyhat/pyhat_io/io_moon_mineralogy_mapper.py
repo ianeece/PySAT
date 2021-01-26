@@ -6,7 +6,7 @@ from . hcube import HCube
 from .. derived import m3
 from .. derived.utils import get_derived_funcs
 
-import gdal
+from osgeo import gdal
 
 
 class M3(GeoDataset, HCube):

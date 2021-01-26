@@ -8,3 +8,4 @@ pvl
 plio
 matplotlib
 pywavelets
+gdal

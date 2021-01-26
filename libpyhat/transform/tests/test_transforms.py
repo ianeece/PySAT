@@ -131,8 +131,8 @@ def test_dimred_FastICA():
     expected_scores = [0.03252833, -0.03749623, -0.11434307]
 
     assert df['FastICA'].shape == (103, 3)
-    np.testing.assert_array_almost_equal(np.sort(expected_comps), np.sort(dimred_obj.components_[:, 0]))
-    np.testing.assert_array_almost_equal(np.sort(expected_scores), np.sort(np.array(df['FastICA'].iloc[0, :])))
+    np.testing.assert_array_almost_equal(np.sort(expected_comps), np.sort(dimred_obj.components_[:, 0]), decimal=5)
+    np.testing.assert_array_almost_equal(np.sort(expected_scores), np.sort(np.array(df['FastICA'].iloc[0, :])), decimal=5)
 
 def test_dimred_PCA():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])

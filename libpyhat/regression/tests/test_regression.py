@@ -173,9 +173,10 @@ def test_KRR():
                                   'degree': 3.0,
                                   'coef0': 1.0,
                                   'kernel_params': 'None'}])
-    regress.fit(x, y)
+    x_temp = np.array(x)[0:20,:] #use truncated versions of input data to fit the model to avoid singular matrix warning
+    y_temp = np.array(y)[0:20]
+    regress.fit(x_temp,y_temp)
     prediction = np.squeeze(regress.predict(x))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
-    expected = 5.603702809509191
-    np.testing.assert_almost_equal(rmse, expected,decimal=2)
-
+    expected = 26.299088128039653
+    np.testing.assert_almost_equal(rmse, expected,decimal=5)

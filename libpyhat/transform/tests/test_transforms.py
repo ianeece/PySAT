@@ -131,8 +131,8 @@ def test_dimred_FastICA():
     expected_scores = [0.03252833, -0.03749623, -0.11434307]
 
     assert df['FastICA'].shape == (103, 3)
-    np.testing.assert_array_almost_equal(expected_comps, dimred_obj.components_[:, 0])
-    np.testing.assert_array_almost_equal(expected_scores, np.array(df['FastICA'].iloc[0, :]))
+    np.testing.assert_array_almost_equal(np.sort(expected_comps), np.sort(dimred_obj.components_[:, 0]))
+    np.testing.assert_array_almost_equal(np.sort(expected_scores), np.sort(np.array(df['FastICA'].iloc[0, :])))
 
 def test_dimred_PCA():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -174,5 +174,6 @@ def test_dimred_LDA():
     expected_coefs = [-0.02209121, -0.0016516, -0.01139357, -0.06448139, 0.07085655]
     expected_scores = [-11.89340048, 0.41598425, 0.22964169]
     assert df['LDA'].shape == (103, 3)
-    np.testing.assert_array_almost_equal(expected_coefs, dimred_obj.coef_[:, 0])
-    np.testing.assert_array_almost_equal(expected_scores, np.array(df['LDA'].iloc[0, :]))
+    np.testing.assert_array_almost_equal(np.sort(expected_coefs), np.sort(dimred_obj.coef_[:, 0]))
+    np.testing.assert_array_almost_equal(np.sort(expected_scores), np.sort(np.array(df['LDA'].iloc[0, :])))
+

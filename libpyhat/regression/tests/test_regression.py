@@ -29,14 +29,18 @@ def test_PLS():
 
 
 def test_badfit():
-    regress = regression(method=['PLS'],
-                         params=[{'n_components': 300, 'scale': False}])
+    regress = regression(method=['OMP'],
+                         params=[{'n_nonzero_coefs': 1000}])
     regress.fit(x, y)
     assert regress.goodfit == False
 
 def test_OLS():
     regress = regression(method=['OLS'],
-                         params=[{'fit_intercept': True}])
+                         params=[{'fit_intercept': True,
+                                  'normalize': False,
+                                  'copy_X': True,
+                                  'positive': False}])
+
     regress.fit(x, y)
     prediction = np.squeeze(regress.predict(x))
     rmse = np.sqrt(np.average((prediction - y) ** 2))

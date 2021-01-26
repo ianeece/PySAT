@@ -183,11 +183,13 @@ class cv:
                             #on the first pass, pop off the n_neigbors parameter so it can be passed correctly
                             n_neighbors = params['n_neighbors']
                             params.pop('n_neighbors')
+                            verbose = params['verbose']
+                            params.pop('verbose')
                         except:
                             pass
                         cvcols = [('predict', '"' + method + '- CV -' + str(self.paramgrid[i]) + ' n_neighbors: ' + str(
                             n_neighbors) + '"')]
-                        model = local_regression.LocalRegression(params, n_neighbors=n_neighbors)
+                        model = local_regression.LocalRegression(params, n_neighbors=n_neighbors, verbose=verbose)
                         y_pred_holdout, coeffs, intercepts = model.fit_predict(cv_train[xcols],cv_train[ycol],cv_holdout[xcols])
                     else:
                         cvcols = [('predict', '"' + method + '- CV -' + str(self.paramgrid[i]) + '"')]
@@ -265,7 +267,7 @@ class cv:
                 output_tmp['RMSEC'] = rmsec_train
             else:
                 if method == 'Local Regression':
-                    model = local_regression.LocalRegression(self.paramgrid[i], n_neighbors=n_neighbors)
+                    model = local_regression.LocalRegression(self.paramgrid[i], n_neighbors=n_neighbors, verbose=verbose)
                     modelkey = "{} - {} - ({}, {}) {} n_neighbors: {}".format(method, ycol[0][-1], yrange[0], yrange[1],
                                                               self.paramgrid[i],n_neighbors)
                 else:

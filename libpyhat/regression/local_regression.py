@@ -11,7 +11,7 @@ class LocalRegression:
     """This class implements "local" regression. Given a set of training data and a set of unknown data,
            iterate through each unknown spectrum, find the nearest training spectra, and generate a model.
            Each of these local models is optimized using built-in cross validation methods from scikit."""
-    def __init__(self, params, n_neighbors = 250):
+    def __init__(self, params, n_neighbors = 250, verbose = True):
         """Initialize LocalRegression
 
         Arguments:
@@ -26,6 +26,7 @@ class LocalRegression:
                                        # params is a dict containing the keywords and parameters for ElasticNetCV
 
         self.neighbors = NearestNeighbors(n_neighbors=n_neighbors)
+        self.verbose = verbose
 
     def fit_predict(self,x_train,y_train, x_predict):
         """Use local regression to predict values for unknown data.
@@ -40,7 +41,8 @@ class LocalRegression:
         coeffs = []
         intercepts = []
         for i in range(x_predict.shape[0]):
-            print('Predicting spectrum ' + str(i + 1))
+            if self.verbose == True:
+                print('Predicting spectrum ' + str(i + 1))
             x_temp = np.array(x_predict)[i,:]
             foo, ind = self.neighbors.kneighbors([x_temp])
             x_train_local = np.squeeze(np.array(x_train)[ind])

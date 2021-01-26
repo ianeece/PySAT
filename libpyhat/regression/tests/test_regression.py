@@ -41,10 +41,13 @@ def test_OLS():
                                   'copy_X': True,
                                   'positive': False}])
 
-    regress.fit(x, y)
+    x_temp = np.array(x)[0:20,:]  # use truncated versions of input data to fit the model to keep it well behaved
+    y_temp = np.array(y)[0:20]
+
+    regress.fit(x_temp, y_temp)
     prediction = np.squeeze(regress.predict(x))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
-    expected = 5.604104598379565
+    expected = 26.30786143321134
     np.testing.assert_almost_equal(rmse, expected)
 
 
@@ -180,3 +183,5 @@ def test_KRR():
     rmse = np.sqrt(np.average((prediction - y) ** 2))
     expected = 26.299088128039653
     np.testing.assert_almost_equal(rmse, expected,decimal=5)
+
+test_OLS()

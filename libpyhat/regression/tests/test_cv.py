@@ -92,7 +92,9 @@ def test_cv_local_regression():
               'fit_intercept': [True],
               'positive': [False],
               'random_state': [1],
-              'tol': [1e-2]
+              'tol': [1e-2],
+              'l1_ratio':[.1, .7, .95, 1],
+              'verbose':[False]
               }
     paramgrid = list(ParameterGrid(params))
 
@@ -101,16 +103,17 @@ def test_cv_local_regression():
                                                                   method='Local Regression', yrange=[0, 100],
                                                                   calc_path=False, alphas=None)
 
-    expected_predicts = [51.30212, 54.25293063, 48.54834655, 54.18676067]
-    expected_output_rmsec = [10.32151211, 10.89018268]
+    expected_predicts = [51.83360028, 54.24957492, 46.05024927, 54.21137841, 51.314045]
+    expected_output_rmsec = [10.23372859, 10.9200063]
 
-    np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[5, :]))
-    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')]))
-    assert output.shape == (2, 11)
-    assert len(models) == 2
-    assert len(modelkeys) == 2
+    np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[5, 0:5]))
+    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')])[0:2])
+    assert output.shape == (8, 13)
+    assert len(models) == 8
+    assert len(modelkeys) == 8
     assert modelkeys[
-               0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
-    assert len(predictkeys) == 4
-    assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
+               0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
+    assert len(predictkeys) == 16
+    assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
 
+test_cv_local_regression()

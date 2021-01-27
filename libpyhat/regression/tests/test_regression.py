@@ -222,5 +222,5 @@ def test_GP():
     regress.fit(x_temp, y_temp)
     prediction = np.squeeze(regress.predict(scaler.transform(x)))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
-    expected = 25.613637175123632
-    np.testing.assert_almost_equal(rmse, expected, decimal=5)
+    expected = 25.613588134522985
+    np.testing.assert_almost_equal(rmse, expected, decimal=4)

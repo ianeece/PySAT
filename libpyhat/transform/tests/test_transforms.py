@@ -171,9 +171,9 @@ def test_dimred_LDA():
     cluster.cluster(df, 'wvl', 'K-Means', [], kws)
     params = {'n_components': 3}
     df, dimred_obj = dim_red.dim_red(df, 'wvl', 'LDA', [], params, ycol='K-Means')
-    expected_coefs = [-0.02209121, -0.0016516, -0.01139357, -0.06448139, 0.07085655]
-    expected_scores = [-11.89340048, 0.41598425, 0.22964169]
+    expected_coefs = np.sort([0.02209121, 0.0016516, 0.01139357, 0.06448139, 0.07085655])
+    expected_scores = np.sort([11.89340048, 0.41598425, 0.22964169])
     assert df['LDA'].shape == (103, 3)
-    np.testing.assert_array_almost_equal(np.sort(expected_coefs), np.sort(dimred_obj.coef_[:, 0]))
-    np.testing.assert_array_almost_equal(np.sort(expected_scores), np.sort(np.array(df['LDA'].iloc[0, :])))
-
+    # +/- sign and order of these values can vary, use sort and abs to stabilize things
+    np.testing.assert_array_almost_equal(expected_coefs, np.sort(np.abs(dimred_obj.coef_[:, 0])))
+    np.testing.assert_array_almost_equal(expected_scores, np.sort(np.abs(np.array(df['LDA'].iloc[0, :]))))

@@ -3,6 +3,8 @@ import pandas as pd
 from libpyhat.examples import get_path
 from libpyhat.transform.norm import norm
 from libpyhat.regression.regression import regression
+from sklearn.gaussian_process.kernels import RBF, Matern
+from sklearn.preprocessing import StandardScaler
 np.random.seed(1)
 
 df = pd.read_csv(get_path('test_data.csv'),header=[0,1])
@@ -200,4 +202,25 @@ def test_GBR():
     prediction = np.squeeze(regress.predict(x))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
     expected = 9.75587930063076
+    np.testing.assert_almost_equal(rmse, expected, decimal=5)
+
+def test_GP():
+    regress = regression(method=['GP'],
+                         params = [{'kernel': Matern(length_scale=1.0, nu=3.0),
+                                    'alpha':1e-10,
+                                    'optimizer':"fmin_l_bfgs_b",
+                                    'n_restarts_optimizer':0,
+                                    'normalize_y':False,
+                                    'copy_X_train':True,
+                                    'random_state':0}])
+    x_temp = np.array(x)[0:20,:]  # use truncated versions of input data to fit the model
+    y_temp = np.array(y)[0:20]
+
+    scaler = StandardScaler()
+    x_temp = scaler.fit_transform(x_temp)
+
+    regress.fit(x_temp, y_temp)
+    prediction = np.squeeze(regress.predict(scaler.transform(x)))
+    rmse = np.sqrt(np.average((prediction - y) ** 2))
+    expected = 25.613637175123632
     np.testing.assert_almost_equal(rmse, expected, decimal=5)

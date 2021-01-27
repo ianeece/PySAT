@@ -18,7 +18,6 @@ from sklearn.linear_model import enet_path, lasso_path
 from sklearn.linear_model._base import _pre_fit
 from sklearn.utils.validation import check_X_y, check_array
 from sklearn import decomposition
-import sklearn.gaussian_process.kernels as kernels
 
 warnings.filterwarnings('ignore')
 import time
@@ -141,16 +140,6 @@ class cv:
 
             foldcount = 1
 
-            if method == 'GP':
-                nc = self.paramgrid[i].pop('n_components')
-                isotropic = self.paramgrid[i].pop('isotropic')
-                if isotropic == True:
-                    kernel = kernels.RBF()
-                else:
-                    kernel = kernels.RBF(length_scale=np.full(nc, 1))
-                self.paramgrid[i]['kernel'] = kernel
-
-
             for train, holdout in cv_iterator:  # Iterate through each of the folds in the training set
 
                 cv_train = Train.iloc[train]  # extract the data to be used to create the model
@@ -193,32 +182,14 @@ class cv:
                         y_pred_holdout, coeffs, intercepts = model.fit_predict(cv_train[xcols],cv_train[ycol],cv_holdout[xcols])
                     else:
                         cvcols = [('predict', '"' + method + '- CV -' + str(self.paramgrid[i]) + '"')]
-                        if method == 'GP':
-                            gp_pca = decomposition.PCA(n_components=nc)
-                            gp_pca_train = gp_pca.fit_transform(cv_train[xcols])
-                            gp_pca_holdout = gp_pca.transform(cv_holdout[xcols])
-                            for j in list(range(1, gp_pca_train.shape[1] + 1)):
-                                cv_train[('PCA', str(i))] = gp_pca_train[:, j - 1]
-                                cv_holdout[('PCA', str(i))] = gp_pca_holdout[:,j-1]
-                            pass
 
-
-                            #fit the model and predict the held-out data
-                            model = regression([method], [self.paramgrid[i]])
-                            model.fit(cv_train['PCA'], cv_train[ycol])
-                            if model.goodfit:
-                                y_pred_holdout = model.predict(cv_holdout['PCA'])
-                            else:
-                                y_pred_holdout = cv_holdout[ycol] * np.nan
+                        #fit the model and predict the held-out data
+                        model = regression([method], [self.paramgrid[i]])
+                        model.fit(cv_train[xcols], cv_train[ycol])
+                        if model.goodfit:
+                            y_pred_holdout = model.predict(cv_holdout[xcols])
                         else:
-
-                            #fit the model and predict the held-out data
-                            model = regression([method], [self.paramgrid[i]])
-                            model.fit(cv_train[xcols], cv_train[ycol])
-                            if model.goodfit:
-                                y_pred_holdout = model.predict(cv_holdout[xcols])
-                            else:
-                                y_pred_holdout = cv_holdout[ycol] * np.nan
+                            y_pred_holdout = cv_holdout[ycol] * np.nan
                     #add the predictions to the appropriate column in the training data
                     Train.at[Train.index[holdout], cvcols[0]] =  y_pred_holdout
                     #append the RMSECV to the list
@@ -236,35 +207,36 @@ class cv:
 
             #fit the model on the full training set using the current settings
             if calc_path:
-                X = Train[xcols]
-                y = Train[ycol]
-
-                path_alphas, \
-                path_coefs, \
-                intercepts, \
-                path_n_iters, \
-                ypred_train, \
-                rmsec_train, \
-                cols = path_calc(X, y, X, y, alphas, self.paramgrid[i], colname = 'Cal', yname = ycol[0][-1], method = method)
-
-
-                for n in list(range(len(path_alphas))):
-                    Train[cols[n]]=ypred_train[n] #put the training set predictions in the data frame
-                    predictkeys.append(cols[n][-1])
-                    #create the model and manually set its parameters based on the path results rather than training it
-                    model = regression([method], [self.paramgrid[i]])
-                    model.model.set_params(alpha = path_alphas[n])
-                    setattr(model.model, 'intercept_', intercepts[n])
-                    setattr(model.model, 'coef_', np.squeeze(path_coefs)[:,n])
-                    setattr(model.model, 'n_iter_', path_n_iters[n])
-
-                    #add the model and its name to the list
-                    models.append(model)
-                    modelkey = "{} - {} - ({}, {}) Alpha: {}, {}".format(method, ycol[0][-1], yrange[0], yrange[1],path_alphas[n],
-                                                              self.paramgrid[i])
-                    modelkeys.append(modelkey)
-
-                output_tmp['RMSEC'] = rmsec_train
+                pass
+                # X = Train[xcols]
+                # y = Train[ycol]
+                #
+                # path_alphas, \
+                # path_coefs, \
+                # intercepts, \
+                # path_n_iters, \
+                # ypred_train, \
+                # rmsec_train, \
+                # cols = path_calc(X, y, X, y, alphas, self.paramgrid[i], colname = 'Cal', yname = ycol[0][-1], method = method)
+                #
+                #
+                # for n in list(range(len(path_alphas))):
+                #     Train[cols[n]]=ypred_train[n] #put the training set predictions in the data frame
+                #     predictkeys.append(cols[n][-1])
+                #     #create the model and manually set its parameters based on the path results rather than training it
+                #     model = regression([method], [self.paramgrid[i]])
+                #     model.model.set_params(alpha = path_alphas[n])
+                #     setattr(model.model, 'intercept_', intercepts[n])
+                #     setattr(model.model, 'coef_', np.squeeze(path_coefs)[:,n])
+                #     setattr(model.model, 'n_iter_', path_n_iters[n])
+                #
+                #     #add the model and its name to the list
+                #     models.append(model)
+                #     modelkey = "{} - {} - ({}, {}) Alpha: {}, {}".format(method, ycol[0][-1], yrange[0], yrange[1],path_alphas[n],
+                #                                               self.paramgrid[i])
+                #     modelkeys.append(modelkey)
+                #
+                # output_tmp['RMSEC'] = rmsec_train
             else:
                 if method == 'Local Regression':
                     model = local_regression.LocalRegression(self.paramgrid[i], n_neighbors=n_neighbors, verbose=verbose)
@@ -279,26 +251,14 @@ class cv:
                 if method == 'Local Regression':
                     ypred_train, coeffs, intercepts = model.fit_predict(Train[xcols],Train[ycol],Train[xcols])
                 else:
-                    if method == 'GP':
-                        gp_pca = decomposition.PCA(n_components=nc)
-                        gp_pca_train = gp_pca.fit_transform(Train[xcols])
-                        for j in list(range(1, gp_pca_train.shape[1] + 1)):
-                            Train[('PCA', str(i))] = gp_pca_train[:, j - 1]
 
-                        model.fit(Train['PCA'], Train[ycol])
-                        if model.goodfit:
-                            ypred_train = model.predict(Train['PCA'])
-                        else:
-                            models = models[:-1]
-                            modelkeys = modelkeys[:-1]
+                    model.fit(Train[xcols], Train[ycol])
+                    #if the fit is good, then predict the training set
+                    if model.goodfit:
+                        ypred_train = model.predict(Train[xcols])
                     else:
-                        model.fit(Train[xcols], Train[ycol])
-                        #if the fit is good, then predict the training set
-                        if model.goodfit:
-                            ypred_train = model.predict(Train[xcols])
-                        else:
-                            models = models[:-1]
-                            modelkeys = modelkeys[:-1]
+                        models = models[:-1]
+                        modelkeys = modelkeys[:-1]
 
                 #add the calibration predictions to the appropriate column
                 if method == 'Local Regression':

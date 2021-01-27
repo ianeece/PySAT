@@ -177,3 +177,11 @@ def test_dimred_LDA():
     # +/- sign and order of these values can vary, use sort and abs to stabilize things
     np.testing.assert_array_almost_equal(expected_coefs, np.sort(np.abs(dimred_obj.coef_[:, 0])))
     np.testing.assert_array_almost_equal(expected_scores, np.sort(np.abs(np.array(df['LDA'].iloc[0, :]))))
+
+def test_MNF():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
+    params = {'n_components':4}
+    df, dimred_obj = dim_red.dim_red(df, 'wvl','MNF', [], params)
+    score_result = np.sort(np.array(df['MNF'].iloc[0,:]))
+    expected_scores = [-36.6691721, -5.29645881, -3.63660052, 598.27972428]
+    np.testing.assert_array_almost_equal(expected_scores, score_result)

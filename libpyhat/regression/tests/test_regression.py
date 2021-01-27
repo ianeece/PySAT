@@ -183,3 +183,21 @@ def test_KRR():
     rmse = np.sqrt(np.average((prediction - y) ** 2))
     expected = 26.299088128039653
     np.testing.assert_almost_equal(rmse, expected,decimal=5)
+
+def test_GBR():
+    regress = regression(method=['GBR'],
+                         params = [{'learning_rate':0.1,
+                                   'n_estimators':10,
+                                   'alpha':0.9,
+                                   'subsample':1,
+                                   'min_samples_split':2,
+                                   'min_samples_leaf':1,
+                                   'min_weight_fraction_leaf':0,
+                                   'max_depth':3,
+                                   'min_impurity_decrease':0.0}])
+
+    regress.fit(x, y)
+    prediction = np.squeeze(regress.predict(x))
+    rmse = np.sqrt(np.average((prediction - y) ** 2))
+    expected = 9.75587930063076
+    np.testing.assert_almost_equal(rmse, expected, decimal=5)

@@ -98,7 +98,7 @@ class cv:
         predictkeys = []
 
         if yrange is None:
-            yrange = [np.min(Train[ycol]),np.max(Train(ycol))]
+            yrange = [np.min(Train[ycol])[0],np.max(Train[ycol])[0]]
 
         for i in list(range(len(self.paramgrid))):
             print('Permutation '+str(i+1)+' of '+str(len(self.paramgrid)))
@@ -128,9 +128,9 @@ class cv:
             #fill in the output template based on the current permutation parameters
             for k in self.paramgrid[i].keys():
                 output_tmp.at[0,k]=self.paramgrid[i][k]
-            if alphas is not None:
-                output_tmp = pd.concat([output_tmp]*len(alphas))
-                output_tmp['alphas'] = alphas
+            # if alphas is not None:  #this was used for path calc. comment out until that can be debugged
+            #     output_tmp = pd.concat([output_tmp]*len(alphas))
+            #     output_tmp['alphas'] = alphas
 
             output_tmp['Method'] = method
 

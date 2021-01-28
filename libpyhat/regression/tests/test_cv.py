@@ -32,7 +32,8 @@ def test_cv():
 
 
     cv_obj = cv.cv(paramgrid)
-    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='PLS',yrange=[0,100],calc_path=False,alphas=None)
+    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='PLS',
+                                                                  yrange=None,calc_path=False,alphas=None)
 
     expected_predicts = [56.55707481, 57.93716105, 59.34785052, 60.59708391, 55.83934129, 56.7456989 ]
     expected_output_rmsec = [18.6509206, 14.64015186, 13.80182457]
@@ -42,7 +43,7 @@ def test_cv():
     assert output.shape==(3,8)
     assert len(models)==3
     assert len(modelkeys)==3
-    assert modelkeys[0]=='PLS - SiO2 - (0, 100) {\'n_components\': 1, \'scale\': False}'
+    assert modelkeys[0]=='PLS - SiO2 - (0.0, 98.57) {\'n_components\': 1, \'scale\': False}'
     assert len(predictkeys)==6
     assert predictkeys[0]=='"PLS- CV -{\'n_components\': 1, \'scale\': False}"'
 

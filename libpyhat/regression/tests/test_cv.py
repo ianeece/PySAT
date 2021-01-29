@@ -79,11 +79,16 @@ def test_cv_calc_path():
     paramgrid = list(ParameterGrid(params))
 
     cv_obj = cv.cv(paramgrid)
-    result = cv_obj.do_cv(df, xcols='wvl', ycol=[('comp', 'SiO2')],
+    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df, xcols='wvl', ycol=[('comp', 'SiO2')],
                                                                   method='LASSO',
                                                                   yrange=[0, 100], calc_path=True, alphas=alphas)
 
-    assert result == None
+    expected_output_rmsec = [np.nan, np.nan, np.nan, np.nan]
+    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')]))
+    assert output.shape == (4, 14)
+    assert len(models) == 0
+    assert len(modelkeys) == 0
+    assert len(predictkeys) == 0
 
 def test_cv_local_regression():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -118,5 +123,3 @@ def test_cv_local_regression():
     assert len(predictkeys) == 16
     assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
 
-test_cv_calc_path()
-test_cv()

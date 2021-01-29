@@ -205,7 +205,7 @@ class cv:
                 for col in cvcols:
                     rmsecv.append(RMSE(Train[col], Train[ycol]))
                     predictkeys.append(col[-1])
-            output_tmp['RMSECV']=rmsecv
+                output_tmp['RMSECV']=rmsecv
 
             #fit the model on the full training set using the current settings
             if calc_path:

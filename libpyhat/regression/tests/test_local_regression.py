@@ -14,7 +14,7 @@ def test_local_regression():
               'max_iter': 2000,
               'selection': 'random'
               }
-    model = local_regression.LocalRegression(params, n_neighbors=10, verbose=False)
+    model = local_regression.LocalRegression(params, n_neighbors=10, verbose=True)
     predictions, coeffs, intercepts = model.fit_predict(df['wvl'],df[('comp','SiO2')],df['wvl'])
     expected_rmse = 3.6651844609454796
     expected_coefs = [ 0.06578675, 0.086692, 0.04730609, 0.02218215, -0.0043394]

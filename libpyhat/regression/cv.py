@@ -137,7 +137,7 @@ class cv:
             rmsecv_folds_tmp = np.empty(shape=(0))  # Create empty array to hold RMSECV for each fold
             alphas_out = np.empty(shape=(0))
             cvcols_all = np.empty(shape=(0))
-
+            cvcols = None
             foldcount = 1
 
             for train, holdout in cv_iterator:  # Iterate through each of the folds in the training set
@@ -147,6 +147,7 @@ class cv:
 
                 if calc_path:
                     print('Path calculation implementation is buggy and is currently disabled')
+
 #                     # get X and y data
 #                     X = cv_train[xcols]
 #                     y = cv_train[ycol]
@@ -200,9 +201,10 @@ class cv:
 
             #now that all the folds have been held out and predicted, calculate the overall rmsecv and add it to the output
             rmsecv = []
-            for col in cvcols:
-                rmsecv.append(RMSE(Train[col], Train[ycol]))
-                predictkeys.append(col[-1])
+            if cvcols is not None:
+                for col in cvcols:
+                    rmsecv.append(RMSE(Train[col], Train[ycol]))
+                    predictkeys.append(col[-1])
             output_tmp['RMSECV']=rmsecv
 
             #fit the model on the full training set using the current settings

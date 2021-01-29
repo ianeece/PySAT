@@ -47,42 +47,43 @@ def test_cv():
     assert len(predictkeys)==6
     assert predictkeys[0]=='"PLS- CV -{\'n_components\': 1, \'scale\': False}"'
 
-# def test_cv_calc_path():
-#     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
-#     df = stratified_folds(df, nfolds=3, sortby=('comp', 'SiO2'))
+def test_cv_badfit():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
+    df = stratified_folds(df, nfolds=3, sortby=('comp', 'SiO2'))
 
-#     params = {
-#         'fit_intercept': [True, False],
-#         'max_iter': [1000],
-#         'tol': [1e-3],
-#         'precompute': [True],
-#         'copy_X': [True],
-#         'positive': [True, False],
-#         'selection': ['random'],
-#         'random_state': [1]}
-#     alphas = np.logspace(np.log10(0.0000001), np.log10(0.01),
-#                          num=10)
-#     paramgrid = list(ParameterGrid(params))
+    params = {'n_nonzero_coefs': [1000,2000]}
+    paramgrid = list(ParameterGrid(params))
 
-#     cv_obj = cv.cv(paramgrid)
-#     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df, xcols='wvl', ycol=[('comp', 'SiO2')],
-#                                                                   method='LASSO',
-#                                                                   yrange=[0, 100], calc_path=True, alphas=alphas)
+    cv_obj = cv.cv(paramgrid)
+    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='OMP',
+                                                                  yrange=None,calc_path=False,alphas=None)
+    expected_predicts = np.nan
+    np.testing.assert_array_almost_equal(expected_predicts,np.array(df_out['predict'].iloc[0,0]))
 
-#     expected_predicts = [57.87064 , 57.868983, 57.868983, 57.868983, 57.868983, 59.315111, 59.315113, 59.315114, 59.315114, 59.315114]
-#     expected_output_rmsec = [18.490365, 18.490365, 18.490365, 18.490365, 18.490365,  7.042796, 6.986007,  6.967643,  6.959045,  6.953588]
 
-#     np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[0, 5:15]))
-#     np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')].iloc[5:15]))
+def test_cv_calc_path():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
+    df = stratified_folds(df, nfolds=3, sortby=('comp', 'SiO2'))
 
-#     assert output.shape == (40, 15)
-#     assert len(models) == 40
-#     assert len(modelkeys) == 40
-#     assert modelkeys[
-#                0] == 'LASSO - SiO2 - (0, 100) Alpha: 0.01, {\'copy_X\': True, \'fit_intercept\': True, \'max_iter\': 1000, \'positive\': True, \'precompute\': True, \'random_state\': 1, \'selection\': \'random\', \'tol\': 0.001}'
-#     assert len(predictkeys) == 80
-#     assert predictkeys[
-#                0] == '"LASSO - SiO2 - CV - Alpha:0.01 - {\'copy_X\': True, \'fit_intercept\': True, \'max_iter\': 1000, \'positive\': True, \'precompute\': True, \'random_state\': 1, \'selection\': \'random\', \'tol\': 0.001}"'
+    params = {
+        'fit_intercept': [True, False],
+        'max_iter': [1000],
+        'tol': [1e-3],
+        'precompute': [True],
+        'copy_X': [True],
+        'positive': [True, False],
+        'selection': ['random'],
+        'random_state': [1]}
+    alphas = np.logspace(np.log10(0.0000001), np.log10(0.01),
+                         num=10)
+    paramgrid = list(ParameterGrid(params))
+
+    cv_obj = cv.cv(paramgrid)
+    result = cv_obj.do_cv(df, xcols='wvl', ycol=[('comp', 'SiO2')],
+                                                                  method='LASSO',
+                                                                  yrange=[0, 100], calc_path=True, alphas=alphas)
+
+    assert result == None
 
 def test_cv_local_regression():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -117,3 +118,5 @@ def test_cv_local_regression():
     assert len(predictkeys) == 16
     assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
 
+test_cv_calc_path()
+test_cv()

@@ -13,24 +13,32 @@
 
 # Installation - For Users
   - Install [Anaconda Python](https://www.continuum.io/downloads).  Be sure to get Python 3.x
-  - Create a conda env for PyHAT: `conda create -n pyhat`
+  - Create a conda env for PyHAT: `conda create -n pyhat`.
   - Add conda forge to your channels list: `conda config --add channels conda-forge`
   - Activate the PyHAT environment: `conda activate pyhat` (for windows: `conda pyhat`)
   - To install: `conda install -c usgs-astrogeology pyhat`
 
 # Installation - For Developers
   - Install [Anaconda Python](https://www.continuum.io/downloads).  Be sure to get Python 3.x
-  - Add conda forge to your channels list: `conda config --add channels conda-forge`
-  - Clone this repo: `git clone https://github.com/USGS-Astrogeology/PyHAT`
-  - Enter the cloned repo: `cd PyHAT`
-  - Pull the `dev` branch: `git fetch && git checkout dev`
-  - Install the dependencies: `conda env create -f environment.yml`
+  - Add conda forge to your channels list: `conda config --add channels conda-forge`.
+  - Clone this repo: `git clone https://github.com/USGS-Astrogeology/PyHAT`.
+  - Enter the cloned repo: `cd PyHAT`.
+  - Pull the `dev` branch: `git fetch && git checkout dev`.
+  - Install the dependencies: `conda env create -f environment.yml`.
+  - For Ubuntu/Linux: Update your $PYTHONPATH to include PyHAT.
+	-- Add to your bashrc file: `export PYTHONPATH="${PYTHONPATH}:/<path-to-PyHAT>/PyHAT"'.
+        -- Source your bashrc file: `source /<path-to-bashrc>/bashrc'.
 
-# Demo
-  - Activate the PyHAT environment: `conda activate PyHAT'
+# Jupyter Notebook Demo
+  - For Ubuntu/Linux: Update your $JUPYTERPATH to include the installed PyHAT dependencies.
+	-- Add to your bashrc file: `export JUPYTER_PATH="${JUPYTER_PATH}:/<path-to-anaconda>/anaconda3/envs/pyhat/lib/python3.9/site-packages/"'.
+        -- Note that as Anaconda and Python versions change, so might this path.
+        -- Source your bashrc file: `source /<path-to-bashrc>/bashrc'.
+  - Activate the PyHAT environment: `conda activate PyHAT'.
   - Execute the `jupyter notebook` that will open a new browser tab with the Jupyter homepage.
-  - Navigate to the `notebooks' folder
+  - Navigate to the `notebooks' folder in the PyHAT directory.
   - Launch (click) the `Kaguya_Spectral_Profiler.ipynb` notebook.
+	-- Not all notebooks are working at the moment.
   
 # QGIS Plugin
   - A QGIS plugin is available [here](https://github.com/USGS-Astrogeology/pyhat_qgis).  This plugin allows users to create and view derived products using QGIS rather than a native Python environment.

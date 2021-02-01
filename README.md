@@ -34,7 +34,7 @@
   - Activate the PyHAT environment: `conda activate PyHAT`.
   - Execute the `jupyter notebook` that will open a new browser tab with the Jupyter homepage.
   - Navigate to the `notebooks' folder in the PyHAT directory.
-  - Launch (click) the `Kaguya_Spectral_Profiler.ipynb` notebook.
+  - Launch (click) the `Horgan Example.ipynb` notebook.
       - Note: Not all notebooks are working at the moment.
   
 # QGIS Plugin

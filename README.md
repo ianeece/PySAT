@@ -24,11 +24,12 @@
   - Clone this repo: `git clone https://github.com/USGS-Astrogeology/PyHAT`
   - Enter the cloned repo: `cd PyHAT`
   - Pull the `dev` branch: `git fetch && git checkout dev`
-  - Install the dependencies: `conda create -f environment.yml`
+  - Install the dependencies: `conda env create -f environment.yml`
 
 # Demo
-
+  - Activate the PyHAT environment: `conda activate PyHAT'
   - Execute the `jupyter notebook` that will open a new browser tab with the Jupyter homepage.
+  - Navigate to the `notebooks' folder
   - Launch (click) the `Kaguya_Spectral_Profiler.ipynb` notebook.
   
 # QGIS Plugin

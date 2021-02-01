@@ -32,7 +32,8 @@ def test_cv():
 
 
     cv_obj = cv.cv(paramgrid)
-    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='PLS',yrange=[0,100],calc_path=False,alphas=None)
+    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='PLS',
+                                                                  yrange=None,calc_path=False,alphas=None)
 
     expected_predicts = [56.55707481, 57.93716105, 59.34785052, 60.59708391, 55.83934129, 56.7456989 ]
     expected_output_rmsec = [18.6509206, 14.64015186, 13.80182457]
@@ -42,9 +43,23 @@ def test_cv():
     assert output.shape==(3,8)
     assert len(models)==3
     assert len(modelkeys)==3
-    assert modelkeys[0]=='PLS - SiO2 - (0, 100) {\'n_components\': 1, \'scale\': False}'
+    assert modelkeys[0]=='PLS - SiO2 - (0.0, 98.57) {\'n_components\': 1, \'scale\': False}'
     assert len(predictkeys)==6
     assert predictkeys[0]=='"PLS- CV -{\'n_components\': 1, \'scale\': False}"'
+
+def test_cv_badfit():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
+    df = stratified_folds(df, nfolds=3, sortby=('comp', 'SiO2'))
+
+    params = {'n_nonzero_coefs': [1000,2000]}
+    paramgrid = list(ParameterGrid(params))
+
+    cv_obj = cv.cv(paramgrid)
+    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='OMP',
+                                                                  yrange=None,calc_path=False,alphas=None)
+    expected_predicts = np.nan
+    np.testing.assert_array_almost_equal(expected_predicts,np.array(df_out['predict'].iloc[0,0]))
+
 
 def test_cv_calc_path():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -68,20 +83,12 @@ def test_cv_calc_path():
                                                                   method='LASSO',
                                                                   yrange=[0, 100], calc_path=True, alphas=alphas)
 
-    expected_predicts = [57.87064 , 57.868983, 57.868983, 57.868983, 57.868983, 59.315111, 59.315113, 59.315114, 59.315114, 59.315114]
-    expected_output_rmsec = [18.490365, 18.490365, 18.490365, 18.490365, 18.490365,  7.042796, 6.986007,  6.967643,  6.959045,  6.953588]
-
-    np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[0, 5:15]))
-    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')].iloc[5:15]))
-
-    assert output.shape == (40, 15)
-    assert len(models) == 40
-    assert len(modelkeys) == 40
-    assert modelkeys[
-               0] == 'LASSO - SiO2 - (0, 100) Alpha: 0.01, {\'copy_X\': True, \'fit_intercept\': True, \'max_iter\': 1000, \'positive\': True, \'precompute\': True, \'random_state\': 1, \'selection\': \'random\', \'tol\': 0.001}'
-    assert len(predictkeys) == 80
-    assert predictkeys[
-               0] == '"LASSO - SiO2 - CV - Alpha:0.01 - {\'copy_X\': True, \'fit_intercept\': True, \'max_iter\': 1000, \'positive\': True, \'precompute\': True, \'random_state\': 1, \'selection\': \'random\', \'tol\': 0.001}"'
+    expected_output_rmsec = [np.nan, np.nan, np.nan, np.nan]
+    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')]))
+    assert output.shape == (4, 14)
+    assert len(models) == 0
+    assert len(modelkeys) == 0
+    assert len(predictkeys) == 0
 
 def test_cv_local_regression():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -92,7 +99,9 @@ def test_cv_local_regression():
               'fit_intercept': [True],
               'positive': [False],
               'random_state': [1],
-              'tol': [1e-2]
+              'tol': [1e-2],
+              'l1_ratio':[.1, .7, .95, 1],
+              'verbose':[False]
               }
     paramgrid = list(ParameterGrid(params))
 
@@ -101,16 +110,16 @@ def test_cv_local_regression():
                                                                   method='Local Regression', yrange=[0, 100],
                                                                   calc_path=False, alphas=None)
 
-    expected_predicts = [51.30212, 54.25293063, 48.54834655, 54.18676067]
-    expected_output_rmsec = [10.32151211, 10.89018268]
+    expected_predicts = [51.83360028, 54.24957492, 46.05024927, 54.21137841, 51.314045]
+    expected_output_rmsec = [10.23372859, 10.9200063]
 
-    np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[5, :]))
-    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')]))
-    assert output.shape == (2, 11)
-    assert len(models) == 2
-    assert len(modelkeys) == 2
+    np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[5, 0:5]))
+    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')])[0:2])
+    assert output.shape == (8, 13)
+    assert len(models) == 8
+    assert len(modelkeys) == 8
     assert modelkeys[
-               0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
-    assert len(predictkeys) == 4
-    assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
+               0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
+    assert len(predictkeys) == 16
+    assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
 

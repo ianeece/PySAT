@@ -2,7 +2,7 @@ from unittest import mock
 import pytest
 import numpy as np
 
-from libpyhat.io import io_crism as icsm
+from libpyhat.pyhat_io import io_crism as icsm
 from . crism_wv import crism_wv
 
 @pytest.fixture

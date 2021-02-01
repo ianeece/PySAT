@@ -150,10 +150,10 @@ class admm_ds:
 
     def L2_norm(self, data):
         if len(data.shape) > 1:
-            w = np.sqrt(np.sum(np.square(data), axis=1))
+            w = np.array(np.sqrt(np.sum(np.square(data), axis=1)))
             data_normed = data / w[:, None]
         else:
-            w = np.sqrt(np.sum(np.square(data), axis=0))
+            w = np.array(np.sqrt(np.sum(np.square(data), axis=0)))
             data_normed = data / w
         return data_normed, w
 

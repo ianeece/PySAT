@@ -25,10 +25,10 @@
   - Enter the cloned repo: `cd PyHAT`.
   - Pull the `dev` branch: `git fetch && git checkout dev`.
   - Install the dependencies: `conda env create -f environment.yml`.
-  - For Ubuntu/Linux: Update your `$PYTHONPATH' to include the PyHAT directory.
+  - For Ubuntu/Linux: Update your `$PYTHONPATH` to include the PyHAT directory.
 
 # Jupyter Notebook Demo
-  - For Ubuntu/Linux: Update your $JUPYTERPATH to include the installed PyHAT dependencies.
+  - For Ubuntu/Linux: Update your `$JUPYTER_PATH` to include the installed PyHAT dependencies.
       - It will look something like this: `/path-to-anaconda/anaconda3/envs/pyhat/lib/python3.9/site-packages/.`
       - Note that as Anaconda and Python versions change, so might this path.
   - Activate the PyHAT environment: `conda activate PyHAT`.

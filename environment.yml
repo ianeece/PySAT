@@ -10,7 +10,10 @@ dependencies:
   - scikit-learn
   - multipledispatch
   - yaml
-  - pvl
+  - pvl=0.3.0
   - plio
   - matplotlib
   - pywavelets
+  - pip
+  - pip:
+    - pysptools

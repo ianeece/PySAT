@@ -10,6 +10,7 @@ import libpyhat.transform.multiply_vector as multiply_vector
 import libpyhat.transform.norm as norm
 import libpyhat.transform.shift_spect as shift_spect
 import libpyhat.clustering.cluster as cluster
+from libpyhat.transform.dim_reductions.mnf import MNF
 np.random.seed(1)
 
 
@@ -131,8 +132,8 @@ def test_dimred_FastICA():
     expected_scores = [0.03252833, -0.03749623, -0.11434307]
 
     assert df['FastICA'].shape == (103, 3)
-    np.testing.assert_array_almost_equal(expected_comps, dimred_obj.components_[:, 0])
-    np.testing.assert_array_almost_equal(expected_scores, np.array(df['FastICA'].iloc[0, :]))
+    np.testing.assert_array_almost_equal(np.sort(expected_comps), np.sort(dimred_obj.components_[:, 0]), decimal=5)
+    np.testing.assert_array_almost_equal(np.sort(expected_scores), np.sort(np.array(df['FastICA'].iloc[0, :])), decimal=5)
 
 def test_dimred_PCA():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -171,8 +172,27 @@ def test_dimred_LDA():
     cluster.cluster(df, 'wvl', 'K-Means', [], kws)
     params = {'n_components': 3}
     df, dimred_obj = dim_red.dim_red(df, 'wvl', 'LDA', [], params, ycol='K-Means')
-    expected_coefs = [-0.02209121, -0.0016516, -0.01139357, -0.06448139, 0.07085655]
-    expected_scores = [-11.89340048, 0.41598425, 0.22964169]
+    expected_coefs = np.sort([0.02209121, 0.0016516, 0.01139357, 0.06448139, 0.07085655])
+    expected_scores = np.sort([11.89340048, 0.41598425, 0.22964169])
     assert df['LDA'].shape == (103, 3)
-    np.testing.assert_array_almost_equal(expected_coefs, dimred_obj.coef_[:, 0])
-    np.testing.assert_array_almost_equal(expected_scores, np.array(df['LDA'].iloc[0, :]))
+    # +/- sign and order of these values can vary, use sort and abs to stabilize things
+    np.testing.assert_array_almost_equal(expected_coefs, np.sort(np.abs(dimred_obj.coef_[:, 0])))
+    np.testing.assert_array_almost_equal(expected_scores, np.sort(np.abs(np.array(df['LDA'].iloc[0, :]))))
+
+def test_MNF():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
+    params = {'n_components':4}
+    df, dimred_obj = dim_red.dim_red(df, 'wvl','MNF', [], params)
+    score_result = np.sort(np.array(df['MNF'].iloc[0,:]))
+    expected_scores = [-36.6691721, -5.29645881, -3.63660052, 598.27972428]
+    np.testing.assert_array_almost_equal(expected_scores, score_result)
+
+    mnf = MNF()
+    try:
+        comps, res_spect = mnf.fit_transform('foo') #test the case where the wrong type of data is passed
+    except:
+        x = np.array(df['wvl'])
+        comps, res_spect = mnf.fit_transform(x) #test the case where a numpy array is passed
+        score_result = np.sort(np.sort(comps[0,:]))
+        expected_scores = [-36.6691721, -5.29645881, -3.63660052, 598.27972428]
+        np.testing.assert_array_almost_equal(expected_scores, score_result)

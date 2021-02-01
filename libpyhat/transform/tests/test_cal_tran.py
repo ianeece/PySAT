@@ -134,3 +134,5 @@ def test_prepare_data_no_repeats():
     a,b = prepare_data(data1, data2, 'Target', 'Target')
     pd.testing.assert_frame_equal(a,data1)
     pd.testing.assert_frame_equal(b, data2)
+
+test_piecewise_ds_pls()

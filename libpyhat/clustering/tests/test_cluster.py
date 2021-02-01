@@ -15,7 +15,6 @@ def test_spectral():
                 'n_neighbors': 5,
                 'degree': 3,
                 'coef0': 1,
-                'n_jobs':1,
                 'random_state':1}
     result = cluster.cluster(df, 'wvl', 'Spectral', [], kws)
     clusters = np.squeeze(np.array(result['Spectral']))
@@ -25,11 +24,10 @@ def test_spectral():
 
 def test_kmeans():
     kws = {'n_clusters': 3,
-              'n_init': 10,
-              'max_iter': 100,
-              'tol': 0.01,
-              'n_jobs':1,
-           'random_state':1}
+          'n_init': 10,
+          'max_iter': 100,
+          'tol': 0.01,
+          'random_state':1}
     result = cluster.cluster(df,'wvl','K-Means',[],kws)
     clusters = np.squeeze(np.array(result['K-Means']))
     cluster_count = [np.count_nonzero(clusters == 1), np.count_nonzero(clusters == 2), np.count_nonzero(clusters == 3)]

@@ -25,17 +25,17 @@
   - Enter the cloned repo: `cd PyHAT`.
   - Pull the `dev` branch: `git fetch && git checkout dev`.
   - Install the dependencies: `conda env create -f environment.yml`.
-  - For Ubuntu/Linux: Update your $PYTHONPATH to include the PyHAT directory.
+  - For Ubuntu/Linux: Update your `$PYTHONPATH' to include the PyHAT directory.
 
 # Jupyter Notebook Demo
   - For Ubuntu/Linux: Update your $JUPYTERPATH to include the installed PyHAT dependencies.
-      - It will look something like this: /path-to-anaconda/anaconda3/envs/pyhat/lib/python3.9/site-packages/.
+      - It will look something like this: `/path-to-anaconda/anaconda3/envs/pyhat/lib/python3.9/site-packages/.`
       - Note that as Anaconda and Python versions change, so might this path.
-  - Activate the PyHAT environment: `conda activate PyHAT'.
+  - Activate the PyHAT environment: `conda activate PyHAT`.
   - Execute the `jupyter notebook` that will open a new browser tab with the Jupyter homepage.
   - Navigate to the `notebooks' folder in the PyHAT directory.
   - Launch (click) the `Kaguya_Spectral_Profiler.ipynb` notebook.
-      - Not all notebooks are working at the moment.
+      - Note: Not all notebooks are working at the moment.
   
 # QGIS Plugin
   - A QGIS plugin is available [here](https://github.com/USGS-Astrogeology/pyhat_qgis).  This plugin allows users to create and view derived products using QGIS rather than a native Python environment.

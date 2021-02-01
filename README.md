@@ -26,12 +26,12 @@
   - Pull the `dev` branch: `git fetch && git checkout dev`.
   - Install the dependencies: `conda env create -f environment.yml`.
   - For Ubuntu/Linux: Update your $PYTHONPATH to include PyHAT.
-      - Add to your bashrc file: `export PYTHONPATH=\"${PYTHONPATH}:\/<path-to-PyHAT>/PyHAT\"'.
+      - Add to your bashrc file: `export PYTHONPATH=``${PYTHONPATH}:/path-to-PyHAT/PyHAT'''.
       - Source your bashrc file: `source /<path-to-bashrc>/bashrc'.
 
 # Jupyter Notebook Demo
   - For Ubuntu/Linux: Update your $JUPYTERPATH to include the installed PyHAT dependencies.
-      - Add to your bashrc file: `export JUPYTER_PATH="${JUPYTER_PATH}:/<path-to-anaconda>/anaconda3/envs/pyhat/lib/python3.9/site-packages/"'.
+      - Add to your bashrc file: `export JUPYTER_PATH=``${JUPYTER_PATH}:/path-to-anaconda/anaconda3/envs/pyhat/lib/python3.9/site-packages/'''.
       - Note that as Anaconda and Python versions change, so might this path.
       - Source your bashrc file: `source /<path-to-bashrc>/bashrc'.
   - Activate the PyHAT environment: `conda activate PyHAT'.

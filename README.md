@@ -26,19 +26,19 @@
   - Pull the `dev` branch: `git fetch && git checkout dev`.
   - Install the dependencies: `conda env create -f environment.yml`.
   - For Ubuntu/Linux: Update your $PYTHONPATH to include PyHAT.
-	-- Add to your bashrc file: `export PYTHONPATH="${PYTHONPATH}:/<path-to-PyHAT>/PyHAT"'.
-        -- Source your bashrc file: `source /<path-to-bashrc>/bashrc'.
+      - Add to your bashrc file: `export PYTHONPATH="${PYTHONPATH}:/<path-to-PyHAT>/PyHAT"'.
+      - Source your bashrc file: `source /<path-to-bashrc>/bashrc'.
 
 # Jupyter Notebook Demo
   - For Ubuntu/Linux: Update your $JUPYTERPATH to include the installed PyHAT dependencies.
-	-- Add to your bashrc file: `export JUPYTER_PATH="${JUPYTER_PATH}:/<path-to-anaconda>/anaconda3/envs/pyhat/lib/python3.9/site-packages/"'.
-        -- Note that as Anaconda and Python versions change, so might this path.
-        -- Source your bashrc file: `source /<path-to-bashrc>/bashrc'.
+      - Add to your bashrc file: `export JUPYTER_PATH="${JUPYTER_PATH}:/<path-to-anaconda>/anaconda3/envs/pyhat/lib/python3.9/site-packages/"'.
+      - Note that as Anaconda and Python versions change, so might this path.
+      - Source your bashrc file: `source /<path-to-bashrc>/bashrc'.
   - Activate the PyHAT environment: `conda activate PyHAT'.
   - Execute the `jupyter notebook` that will open a new browser tab with the Jupyter homepage.
   - Navigate to the `notebooks' folder in the PyHAT directory.
   - Launch (click) the `Kaguya_Spectral_Profiler.ipynb` notebook.
-	-- Not all notebooks are working at the moment.
+      - Not all notebooks are working at the moment.
   
 # QGIS Plugin
   - A QGIS plugin is available [here](https://github.com/USGS-Astrogeology/pyhat_qgis).  This plugin allows users to create and view derived products using QGIS rather than a native Python environment.

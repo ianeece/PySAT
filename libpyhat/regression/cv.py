@@ -262,7 +262,7 @@ def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'
         output_tmp['RMSEC'] = RMSE(ypred_train, Train[ycol])
 
     output = output_tmp
-    return output, model, modelkey, predictkeys
+    return output, model, modelkey, predictkeys, Train['predict']
 
 class cv:
     def __init__(self, paramgrid):
@@ -272,7 +272,7 @@ class cv:
               yrange=None, calc_path = False, alphas = None):
 
         if yrange is None:
-            yrange = [np.min(Train[ycol])[0],np.max(Train[ycol])[0]]
+            yrange = [np.min(Train[ycol]),np.max(Train[ycol])]
 
         args = list(range(len(self.paramgrid)))
         kwargs = {'paramgrid':self.paramgrid, 'Train':Train, 'xcols': xcols, 'ycol': ycol, 'method': method, 'yrange':yrange, 'calc_path':calc_path, 'alphas':alphas}
@@ -284,31 +284,37 @@ class cv:
         models = []
         modelkeys = []
         predictkeys = []
+        output = pd.DataFrame()
         for i in results:
-            try:
+            if i != 0:
                 output = pd.concat((output, i[0]))
-            except:
-                output = i[0]
 
-            if i[1] is not None:
-                models.append(i[1])
-            if i[2] is not None:
-                modelkeys.append(i[2])
-            if i[3] is not None:
-                predictkeys.append(i[3])
+                if i[1] is not None:
+                    models.append(i[1])
+                if i[2] is not None:
+                    modelkeys.append(i[2])
+                if i[3] is not None:
+                    for j in i[3]:
+                        predictkeys.append(j)
+                if i[4] is not None:
+                    try:
+                        cv_predicts = pd.merge(cv_predicts, i[4], left_index=True, right_index=True)
+                    except:
+                        cv_predicts = i[4]
 
-        # t = time.time()
-        # for i in list(range(len(self.paramgrid))):
-        #     output, models, modelkeys, predictkeys = cv_core(i,paramgrid = self.paramgrid, Train = Train, xcols = xcols, ycol = ycol, method = method, yrange = yrange, calc_path = calc_path, alphas=alphas)
-        #
-        #
-        # t2 = time.time()
-        # print('Parallel run took ' + str(parallel_t) + ' seconds')
-        # print('Serial run took ' + str(t2 - t) + ' seconds')
+        try:
+            cv_predicts.columns = [('predict',i) for i in cv_predicts.columns]
+            Train = pd.concat((Train,cv_predicts),axis=1)
+        except:
+            print('Unable to concatenate CV predictions with Training data')
 
         #make the columns of the output data drame multi-indexed
-        cols = output.columns.values
-        cols = [('cv', i) for i in cols]
-        output.columns = pd.MultiIndex.from_tuples(cols)
+        try:
+            cols = output.columns.values
+            cols = [('cv', i) for i in cols]
+            output.columns = pd.MultiIndex.from_tuples(cols)
+        except:
+            print('No valid output')
+
 
         return Train, output, models, modelkeys, predictkeys

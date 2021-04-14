@@ -18,8 +18,11 @@ def test_cv_nofolds():
     results = cv_obj.do_cv(df, xcols='wvl', ycol=[('comp', 'SiO2')],
                                                                   method='PLS', yrange=[0, 100], calc_path=False,
                                                                   alphas=None)
-    print(results)
-    assert results == 0
+    assert results[0].shape == df.shape
+    assert results[1].shape == (0,0)
+    assert results[2] == []
+    assert results[3] == []
+    assert results[4] == []
 
 
 def test_cv():
@@ -32,7 +35,7 @@ def test_cv():
 
 
     cv_obj = cv.cv(paramgrid)
-    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='PLS',
+    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=('comp','SiO2'),method='PLS',
                                                                   yrange=None,calc_path=False,alphas=None)
 
     expected_predicts = [56.55707481, 57.93716105, 59.34785052, 60.59708391, 55.83934129, 56.7456989 ]
@@ -106,7 +109,7 @@ def test_cv_local_regression():
     paramgrid = list(ParameterGrid(params))
 
     cv_obj = cv.cv(paramgrid)
-    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df, xcols='wvl', ycol=[('comp', 'SiO2')],
+    df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df, xcols='wvl', ycol=('comp', 'SiO2'),
                                                                   method='Local Regression', yrange=[0, 100],
                                                                   calc_path=False, alphas=None)
 
@@ -118,8 +121,6 @@ def test_cv_local_regression():
     assert output.shape == (8, 13)
     assert len(models) == 8
     assert len(modelkeys) == 8
-    assert modelkeys[
-               0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
+    assert modelkeys[0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
     assert len(predictkeys) == 16
     assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
-

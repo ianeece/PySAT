@@ -124,3 +124,5 @@ def test_cv_local_regression():
     assert modelkeys[0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
     assert len(predictkeys) == 16
     assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
+
+test_cv_calc_path()

@@ -9,9 +9,9 @@ import scipy.optimize as opt
 import copy
 
 class sm:
-    def __init__(self, blendranges):
+    def __init__(self, blendranges, random_seed = None):
         self.blendranges = blendranges
-
+        self.random_seed = random_seed
 
     def do_blend(self, predictions, truevals=None):
         # create the array indicating which models to blend for each blend range
@@ -21,6 +21,9 @@ class sm:
         # in the third range, use model 1
         # in the fourth range, blend models 1 and 2
         # in the fifth range, use model 2
+
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
 
         self.toblend = []
         for i in range(len(predictions) - 1):

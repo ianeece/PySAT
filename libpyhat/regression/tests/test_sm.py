@@ -26,13 +26,13 @@ def test_sm_blend():
     predictions = [df[('predict','model2')],df[('predict','model1')],df[('predict','model3')],df[('predict','model1')]]
 
     blendranges = [[-9999,30],[20,60],[50,9999]]
-    sm_obj = sm.sm(blendranges)
+    sm_obj = sm.sm(blendranges, random_seed=0)
     blended_predictions = sm_obj.do_blend(np.array(predictions)) #without optimization
     rmse = np.sqrt(np.average((blended_predictions - df[('comp', 'SiO2')]) ** 2))
     np.testing.assert_almost_equal(rmse, 12.703434300128926, decimal=5)
 
     blended_predictions = sm_obj.do_blend(np.array(predictions),truevals=np.array(df[('comp','SiO2')])) #with optimization
     rmse = np.sqrt(np.average((blended_predictions-df[('comp','SiO2')])**2))
-    expected_blendranges = [-9999., 34.14294312, 52.16932749, 52.17489988, 125.78326495, 9999.]
-    np.testing.assert_almost_equal(rmse, 9.849591998401014, decimal=5)
+    expected_blendranges = [-9999., 35.21056413, 50.44074802, 60.25692472, 120.39265394, 9999.]
+    np.testing.assert_almost_equal(rmse, 9.89378907900936, decimal=5)
     np.testing.assert_allclose(expected_blendranges,sm_obj.blendranges,rtol=1e-5)

@@ -11,5 +11,5 @@ def test_m3_io():
         
         assert m.data.shape == (83, 50, 50)
         assert_array_almost_equal(m.data[0:2,0:2,0:2],expected)
-    except:
-        continue
+    except Exception as e:
+        print('Plio had an error: '+str(e))

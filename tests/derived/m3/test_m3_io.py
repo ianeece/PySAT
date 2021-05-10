@@ -1,4 +1,3 @@
-import pytest
 from libpyhat.pyhat_io.io_moon_mineralogy_mapper import M3
 from libpyhat.examples import get_path
 import numpy as np

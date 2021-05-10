@@ -40,6 +40,8 @@ install:
   - conda install pip setuptools
   - conda install --quiet pytest pytest-cov nbsphinx
   - pip install coveralls travis-sphinx
+  - conda list
+  - conda info
 
 script:
   - pytest --cov=libpyhat

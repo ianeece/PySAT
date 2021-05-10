@@ -16,8 +16,7 @@ def test_cv_nofolds():
 
     cv_obj = cv.cv(paramgrid)
     results = cv_obj.do_cv(df, xcols='wvl', ycol=[('comp', 'SiO2')],
-                                                                  method='PLS', yrange=[0, 100], calc_path=False,
-                                                                  alphas=None)
+                                                                  method='PLS', yrange=[0, 100])
     assert results[0].shape == df.shape
     assert results[1].shape == (0,0)
     assert results[2] == []
@@ -36,7 +35,7 @@ def test_cv():
 
     cv_obj = cv.cv(paramgrid)
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=('comp','SiO2'),method='PLS',
-                                                                  yrange=None,calc_path=False,alphas=None)
+                                                                  yrange=None)
 
     expected_predicts = [56.55707481, 57.93716105, 59.34785052, 60.59708391, 55.83934129, 56.7456989 ]
     expected_output_rmsec = [18.6509206, 14.64015186, 13.80182457]
@@ -59,7 +58,7 @@ def test_cv_badfit():
 
     cv_obj = cv.cv(paramgrid)
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='OMP',
-                                                                  yrange=None,calc_path=False,alphas=None)
+                                                                  yrange=None)
     expected_predicts = np.nan
     np.testing.assert_array_almost_equal(expected_predicts,np.array(df_out['predict'].iloc[0,0]))
 
@@ -81,8 +80,7 @@ def test_cv_local_regression():
 
     cv_obj = cv.cv(paramgrid)
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df, xcols='wvl', ycol=('comp', 'SiO2'),
-                                                                  method='Local Regression', yrange=[0, 100],
-                                                                  calc_path=False, alphas=None)
+                                                                  method='Local Regression', yrange=[0, 100])
 
     expected_predicts = [51.83360028, 54.24957492, 46.05024927, 54.21137841, 51.314045]
     expected_output_rmsec = [10.23372859, 10.9200063]
@@ -95,3 +93,5 @@ def test_cv_local_regression():
     assert modelkeys[0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
     assert len(predictkeys) == 16
     assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
+
+test_cv()

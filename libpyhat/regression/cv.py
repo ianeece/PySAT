@@ -24,7 +24,7 @@ def RMSE(ypred, y):
 
 
 def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'), method='PLS',
-              yrange=None, alphas = None):
+              yrange=None):
 
     print('Permutation ' + str(i + 1) + ' of ' + str(len(paramgrid)))
     paramstring = ''
@@ -157,6 +157,7 @@ class cv:
 
         args = list(range(len(self.paramgrid)))
         kwargs = {'paramgrid':self.paramgrid, 'Train':Train, 'xcols': xcols, 'ycol': ycol, 'method': method, 'yrange':yrange}
+
         results = Parallel(n_jobs= -1)(delayed(cv_core)(i, **kwargs) for i in args)
 
         models = []

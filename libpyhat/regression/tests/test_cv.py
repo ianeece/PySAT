@@ -136,8 +136,8 @@ def test_cv_local_regression():
     expected_predicts = [51.83360028, 54.24957492, 46.05024927, 54.21137841, 51.314045]
     expected_output_rmsec = [10.23372859, 10.9200063]
 
-    np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[5, 0:5]))
-    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')])[0:2])
+    np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[5, 0:5]),decimal=4)
+    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')])[0:2],decimal=4)
     assert output.shape == (8, 13)
     assert len(models) == 8
     assert len(modelkeys) == 8

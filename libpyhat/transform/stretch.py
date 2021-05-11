@@ -111,20 +111,6 @@ def histequ_stretch(array):
        the processed ndarray
     """
 
-    def _gethist_cdf(array, num_bins=128):
-        '''
-        This function calculates the cumulative distribution function of a
-        given array and requires that both the input array and the number of
-        bins be provided.
-
-        Returns: cumulative distribution function, bins
-        '''
-        hist, bins = np.histogram(array.flatten(), num_bins, density=False)
-        cdf = hist.cumsum()
-        cdf = cdf ** 0.5
-        cdf = 256 * cdf / cdf[-1] #This needs to have a dtype lookup (16bit would be 2**16-1)
-        return cdf, bins
-
     cdf, bins = gethist_cdf(array)
     shape = array.shape
     #interpolate

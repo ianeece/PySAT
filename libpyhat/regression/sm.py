@@ -9,9 +9,9 @@ import scipy.optimize as opt
 import copy
 
 class sm:
-    def __init__(self, blendranges):
+    def __init__(self, blendranges, random_seed = None):
         self.blendranges = blendranges
-
+        self.random_seed = random_seed
 
     def do_blend(self, predictions, truevals=None):
         # create the array indicating which models to blend for each blend range
@@ -21,6 +21,9 @@ class sm:
         # in the third range, use model 1
         # in the fourth range, blend models 1 and 2
         # in the fifth range, use model 2
+
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
 
         self.toblend = []
         for i in range(len(predictions) - 1):
@@ -37,6 +40,8 @@ class sm:
             n_opt = 5
             i=0
             while i < n_opt:
+                if i > 0:
+                    blendranges = np.hstack(([-9999], blendranges[1:-1]+0.1*np.random.random(len(blendranges)-2), [9999])) #add some randomness to the blendranges each time
                 truevals = np.squeeze(np.array(truevals))
                 result = opt.minimize(self.get_rmse, blendranges, (predictions, truevals), tol=0.00001)
 
@@ -70,13 +75,15 @@ class sm:
         blended = self.submodels_blend(predictions, self.blendranges, overwrite=False)
         return blended
 
-    def get_rmse(self, blendranges, predictions, truevals, rangemin = 0.0, rangemax = 100):
+    def get_rmse(self, blendranges, predictions, truevals, rangemin = 0.0, rangemax = 100, roundval = 10):
         blendranges[1:-1][blendranges[1:-1] < rangemin] = rangemin  # ensure range boundaries don't drift below min
         blendranges[1:-1][blendranges[1:-1] > rangemax] = rangemax  # ensure range boundaries don't drift above max
         blendranges.sort()  # ensure range boundaries stay in order
 
         blended = self.submodels_blend(predictions, blendranges, overwrite=False)
-        RMSE = np.sqrt(np.mean((blended - truevals) ** 2))  # calculate the RMSE
+        # calculate the RMSE. Round to specified precision as a way to control how long optimization runs
+        # Note: don't want to round too much - optimization needs some wiggle room
+        RMSE = np.round(np.sqrt(np.mean((blended - truevals) ** 2)),roundval)
         print('RMSE = '+str(RMSE))
         print('Low model: '+str(round(blendranges[0],4))+' to '+str(round(blendranges[2],4)))
         i=1

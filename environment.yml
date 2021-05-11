@@ -3,14 +3,17 @@ channels:
   - conda-forge
   - usgs-astrogeology
 dependencies:
-  - python>=3
+  - python>=3.7
   - numpy
   - pandas
   - scipy
   - scikit-learn
   - multipledispatch
   - yaml
-  - pvl
-  - plio
+  - pvl=0.3.0
+  - plio=1.2.4
   - matplotlib
   - pywavelets
+  - pip
+  - pip:
+    - pysptools

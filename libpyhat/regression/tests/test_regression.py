@@ -3,6 +3,8 @@ import pandas as pd
 from libpyhat.examples import get_path
 from libpyhat.transform.norm import norm
 from libpyhat.regression.regression import regression
+from sklearn.gaussian_process.kernels import RBF, Matern
+from sklearn.preprocessing import StandardScaler
 np.random.seed(1)
 
 df = pd.read_csv(get_path('test_data.csv'),header=[0,1])
@@ -29,18 +31,25 @@ def test_PLS():
 
 
 def test_badfit():
-    regress = regression(method=['PLS'],
-                         params=[{'n_components': 300, 'scale': False}])
+    regress = regression(method=['OMP'],
+                         params=[{'n_nonzero_coefs': 1000}])
     regress.fit(x, y)
     assert regress.goodfit == False
 
 def test_OLS():
     regress = regression(method=['OLS'],
-                         params=[{'fit_intercept': True}])
-    regress.fit(x, y)
+                         params=[{'fit_intercept': True,
+                                  'normalize': False,
+                                  'copy_X': True,
+                                  'positive': False}])
+
+    x_temp = np.array(x)[0:20,:]  # use truncated versions of input data to fit the model to keep it well behaved
+    y_temp = np.array(y)[0:20]
+
+    regress.fit(x_temp, y_temp)
     prediction = np.squeeze(regress.predict(x))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
-    expected = 5.604104598379565
+    expected = 26.30786143321134
     np.testing.assert_almost_equal(rmse, expected)
 
 
@@ -100,10 +109,12 @@ def test_Bayesian_Ridge():
                                   'fit_intercept': True,
                                   'normalize': False}])
     regress.fit(x, y)
-    prediction = np.squeeze(regress.predict(x))
+    prediction, pred_std = np.squeeze(regress.predict(x,return_std=True))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
     expected = 6.3894201026386135
+    expected_std = [290.12684166, 290.1432507, 290.13760848, 290.14289498]
     np.testing.assert_almost_equal(rmse, expected)
+    np.testing.assert_array_almost_equal(pred_std[0:4], expected_std)
 
 
 def test_ARD():
@@ -121,10 +132,12 @@ def test_ARD():
                                   'copy_X': True,
                                   'verbose': False}])
     regress.fit(x, y)
-    prediction = np.squeeze(regress.predict(x))
+    prediction, pred_std = np.squeeze(regress.predict(x, return_std=True))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
     expected = 6.714452573751844
+    expected_std = [ 8.55834607, 9.01277664, 9.03318737, 8.61304938]
     np.testing.assert_almost_equal(rmse, expected)
+    np.testing.assert_array_almost_equal(pred_std[0:4],expected_std)
 
 
 def test_LARS():
@@ -169,9 +182,49 @@ def test_KRR():
                                   'degree': 3.0,
                                   'coef0': 1.0,
                                   'kernel_params': 'None'}])
+    x_temp = np.array(x)[0:20,:] #use truncated versions of input data to fit the model to avoid singular matrix warning
+    y_temp = np.array(y)[0:20]
+    regress.fit(x_temp,y_temp)
+    prediction = np.squeeze(regress.predict(x))
+    rmse = np.sqrt(np.average((prediction - y) ** 2))
+    expected = 26.299088128039653
+    np.testing.assert_almost_equal(rmse, expected,decimal=5)
+
+def test_GBR():
+    regress = regression(method=['GBR'],
+                         params = [{'learning_rate':0.1,
+                                   'n_estimators':10,
+                                   'alpha':0.9,
+                                   'subsample':1,
+                                   'min_samples_split':2,
+                                   'min_samples_leaf':1,
+                                   'min_weight_fraction_leaf':0,
+                                   'max_depth':3,
+                                   'min_impurity_decrease':0.0}])
+
     regress.fit(x, y)
     prediction = np.squeeze(regress.predict(x))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
-    expected = 5.603702809509191
-    np.testing.assert_almost_equal(rmse, expected,decimal=2)
+    expected = 9.75587930063076
+    np.testing.assert_almost_equal(rmse, expected, decimal=5)
 
+def test_GP():
+    regress = regression(method=['GP'],
+                         params = [{'kernel': Matern(length_scale=1.0, nu=3.0),
+                                    'alpha':1e-10,
+                                    'optimizer':"fmin_l_bfgs_b",
+                                    'n_restarts_optimizer':0,
+                                    'normalize_y':False,
+                                    'copy_X_train':True,
+                                    'random_state':0}])
+    x_temp = np.array(x)[0:20,:]  # use truncated versions of input data to fit the model
+    y_temp = np.array(y)[0:20]
+
+    scaler = StandardScaler()
+    x_temp = scaler.fit_transform(x_temp)
+
+    regress.fit(x_temp, y_temp)
+    prediction = np.squeeze(regress.predict(scaler.transform(x)))
+    rmse = np.sqrt(np.average((prediction - y) ** 2))
+    expected = 25.613588134522985
+    np.testing.assert_almost_equal(rmse, expected, decimal=4)

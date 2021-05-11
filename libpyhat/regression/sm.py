@@ -9,9 +9,9 @@ import scipy.optimize as opt
 import copy
 
 class sm:
-    def __init__(self, blendranges):
+    def __init__(self, blendranges, random_seed = None):
         self.blendranges = blendranges
-
+        self.random_seed = random_seed
 
     def do_blend(self, predictions, truevals=None):
         # create the array indicating which models to blend for each blend range
@@ -22,6 +22,9 @@ class sm:
         # in the fourth range, blend models 1 and 2
         # in the fifth range, use model 2
 
+        if self.random_seed is not None:
+            np.random.seed(self.random_seed)
+
         self.toblend = []
         for i in range(len(predictions) - 1):
             self.toblend.append([i, i])
@@ -31,19 +34,18 @@ class sm:
         # If the true compositions are provided, then optimize the ranges over which the results are blended to minimize the RMSEC
         blendranges = np.array(self.blendranges).flatten()  # squash the ranges to be a 1d array
         blendranges.sort()  # sort the entries. These will be used by submodels_blend to decide how to combine the predictions
+        self.blendranges = blendranges
         if truevals is not None:
             self.rmse = 99999999
             n_opt = 5
             i=0
             while i < n_opt:
-                #print('Optimizing blending ranges, round #'+str(i))
+                if i > 0:
+                    blendranges = np.hstack(([-9999], blendranges[1:-1]+0.1*np.random.random(len(blendranges)-2), [9999])) #add some randomness to the blendranges each time
                 truevals = np.squeeze(np.array(truevals))
-                result = opt.minimize(self.get_rmse, blendranges, (predictions, truevals))
+                result = opt.minimize(self.get_rmse, blendranges, (predictions, truevals), tol=0.00001)
 
                 if result.fun < self.rmse:
-                    # ranges_temp = np.hstack((result.x, result.x[1:-1]))
-                    # ranges_temp.sort()
-                    # ranges_temp = np.reshape(ranges_temp, (int(len(ranges_temp) / 2), int(2)))
                     self.blendranges = result.x
                     self.rmse = result.fun
                     print(self.blendranges.sort())
@@ -51,6 +53,19 @@ class sm:
                 else:
                     pass
                 i=i+1
+            print(' ')
+            print('Optimum settings:')
+            print('RMSE = ' + str(self.rmse))
+            print('Low model: ' + str(round(self.blendranges[0], 4)) + ' to ' + str(round(self.blendranges[2], 4)))
+            i = 1
+            m = 2
+            while i + 3 < len(self.blendranges) - 1:
+                print('Submodel ' + str(m) + ': ' + str(round(self.blendranges[i], 4)) + ' to ' + str(
+                    round(self.blendranges[i + 3], 4)))
+                i = i + 2
+                m = m + 1
+            print('High model: ' + str(round(self.blendranges[-3], 4)) + ' to ' + str(round(self.blendranges[-1], 4)))
+
         else:
             self.blendranges = blendranges
 
@@ -60,22 +75,24 @@ class sm:
         blended = self.submodels_blend(predictions, self.blendranges, overwrite=False)
         return blended
 
-    def get_rmse(self, blendranges, predictions, truevals, rangemin = 0.0, rangemax = 100):
+    def get_rmse(self, blendranges, predictions, truevals, rangemin = 0.0, rangemax = 100, roundval = 10):
         blendranges[1:-1][blendranges[1:-1] < rangemin] = rangemin  # ensure range boundaries don't drift below min
         blendranges[1:-1][blendranges[1:-1] > rangemax] = rangemax  # ensure range boundaries don't drift above max
         blendranges.sort()  # ensure range boundaries stay in order
 
         blended = self.submodels_blend(predictions, blendranges, overwrite=False)
-        RMSE = np.sqrt(np.mean((blended - truevals) ** 2))  # calculate the RMSE
+        # calculate the RMSE. Round to specified precision as a way to control how long optimization runs
+        # Note: don't want to round too much - optimization needs some wiggle room
+        RMSE = np.round(np.sqrt(np.mean((blended - truevals) ** 2)),roundval)
         print('RMSE = '+str(RMSE))
-        print('Low model: '+str(round(blendranges[0],2))+' to '+str(round(blendranges[2],2)))
+        print('Low model: '+str(round(blendranges[0],4))+' to '+str(round(blendranges[2],4)))
         i=1
         m=2
         while i+3<len(blendranges)-1:
-            print('Submodel '+str(m)+': '+str(round(blendranges[i],2))+' to '+str(round(blendranges[i+3],2)))
+            print('Submodel '+str(m)+': '+str(round(blendranges[i],4))+' to '+str(round(blendranges[i+3],4)))
             i=i+2
             m=m+1
-        print('High model: '+str(round(blendranges[-3],2)) + ' to ' + str(round(blendranges[-1],2)))
+        print('High model: '+str(round(blendranges[-3],4)) + ' to ' + str(round(blendranges[-1],4)))
 
         return RMSE
         

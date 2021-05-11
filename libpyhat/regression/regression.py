@@ -10,7 +10,9 @@ import numpy as np
 import sklearn.kernel_ridge as kernel_ridge
 import sklearn.linear_model as linear
 import sklearn.svm as svm
+import sklearn.gaussian_process as gp
 from sklearn.cross_decomposition import PLSRegression
+from sklearn.ensemble import GradientBoostingRegressor
 
 class regression:
     def __init__(self, method, params, i=0):
@@ -76,8 +78,14 @@ class regression:
         if self.method[i] == 'KRR':
             self.model = kernel_ridge.KernelRidge(**params[i])
 
+        if self.method[i] == 'GP':
+            self.model = gp.GaussianProcessRegressor(**params[i])
 
-    def fit(self, x, y, i=0):
+        if self.method[i] == 'GBR':
+            self.model = GradientBoostingRegressor(**params[i])
+
+
+    def fit(self, x, y):
         try:
             self.model.fit(x, y)
             self.goodfit = True
@@ -87,10 +95,11 @@ class regression:
             traceback.print_stack()
             print(e)
 
-
-    def predict(self, x, i=0):
-        return self.model.predict(x)
-
+    def predict(self, x, return_std = None):
+        if return_std is not None:  #this allows ARD and BRR to give uncertainties along with predictions
+            return self.model.predict(np.array(x), return_std=return_std)
+        else:
+            return self.model.predict(x)
 
     def calc_Qres_Lev(self, x):
         # calculate spectral residuals

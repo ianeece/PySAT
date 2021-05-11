@@ -15,5 +15,6 @@ dependencies:
   - matplotlib
   - pywavelets
   - pip
+  - networkx>=2.5
   - pip:
     - pysptools

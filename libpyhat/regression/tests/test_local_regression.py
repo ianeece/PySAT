@@ -26,3 +26,22 @@ def test_local_regression():
     np.testing.assert_array_almost_equal(expected_coefs, np.array(coeffs)[10,5:10])
     assert np.array(intercepts).shape[0] == 103
     np.testing.assert_array_almost_equal(intercepts[0:5], expected_intercepts)
+
+def test_local_parallel():
+    params = {'fit_intercept': True,
+              'positive': False,
+              'random_state': 1,
+              'tol': 1e-2,
+              'max_iter': 2000,
+              'selection': 'random'
+              }
+    model = local_regression.LocalRegression(params, n_neighbors=10, verbose=True)
+    model.neighbors.fit(df['wvl'])
+    predictions, coeffs, intercepts = local_regression.fit_predict_parallel(0, x_train=df['wvl'], y_train=df[('comp','SiO2')], x_predict=df['wvl'], model=model.model,
+                         neighbors=model.neighbors, verbose=True)
+    expected_prediction = 68.91056448621582
+    expected_coeffs = [-0., -0.01101594, -0.0231962, -0., -0.]
+    expected_intercept = 91.78926076797339
+    np.testing.assert_almost_equal(predictions, expected_prediction)
+    np.testing.assert_array_almost_equal(coeffs[0:5],expected_coeffs)
+    np.testing.assert_almost_equal(intercepts,expected_intercept)

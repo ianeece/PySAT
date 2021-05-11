@@ -181,19 +181,12 @@ class cv:
                     except:
                         cv_predicts = i[4]
 
-        try:
-            cv_predicts.columns = [('predict',i) for i in cv_predicts.columns]
-            Train = pd.concat((Train,cv_predicts),axis=1)
-        except:
-            print('Unable to concatenate CV predictions with Training data')
+        cv_predicts.columns = [('predict',i) for i in cv_predicts.columns]
+        Train = pd.concat((Train,cv_predicts),axis=1)
 
         #make the columns of the output data drame multi-indexed
-        try:
-            cols = output.columns.values
-            cols = [('cv', i) for i in cols]
-            output.columns = pd.MultiIndex.from_tuples(cols)
-        except:
-            print('No valid output')
-
+        cols = output.columns.values
+        cols = [('cv', i) for i in cols]
+        output.columns = pd.MultiIndex.from_tuples(cols)
 
         return Train, output, models, modelkeys, predictkeys

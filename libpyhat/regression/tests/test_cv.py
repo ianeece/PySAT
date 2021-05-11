@@ -102,10 +102,16 @@ def test_cv_badfit():
     paramgrid = list(ParameterGrid(params))
 
     cv_obj = cv.cv(paramgrid)
+
+    output, model, modelkey, predictkeys, predictions = cv.cv_core(0, paramgrid=paramgrid, Train=df, xcols='wvl',
+                                                                   ycol=('comp', 'SiO2'), method='OMP',
+                                                                   yrange=[0, 100])
+
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='OMP',
                                                                   yrange=None)
-    expected_predicts = np.nan
-    np.testing.assert_array_almost_equal(expected_predicts,np.array(df_out['predict'].iloc[0,0]))
+    assert np.isnan(predictions.iloc[0,0])
+    assert np.isnan(df_out['predict'].iloc[0,0])
+
 
 
 def test_cv_local_regression():

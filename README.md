@@ -20,12 +20,13 @@
 
 # Installation - For Developers
   - Install [Anaconda Python](https://www.continuum.io/downloads).  Be sure to get Python 3.x
-  - Add conda forge to your channels list: `conda config --add channels conda-forge`.
+  - Create a conda env for PyHAT: `conda create -n pyhat`.  
+  - Activate the PyHAT environment: `conda activate pyhat` (for windows: `conda pyhat`)
+  - Add conda forge to your channels list: `conda config --env --add channels conda-forge` 
+  - Install the dependencies: `conda env update -f environment.yml`.  
   - Clone this repo: `git clone https://github.com/USGS-Astrogeology/PyHAT`.
   - Enter the cloned repo: `cd PyHAT`.
   - Pull the `dev` branch: `git fetch && git checkout dev`.
-  - Install the dependencies: `conda env create -f environment.yml`.
-  - Activate the PyHAT environment: `conda activate PyHAT'
   - If you plan to test locally before sending a pull request for testing remotely, you'll need to install some prerequisites
       - `conda install --quiet pytest pytest-cov nbsphinx pytest --cov=libpyhat`
       - When you want to run a test: `pytest --cov=libpyhat`

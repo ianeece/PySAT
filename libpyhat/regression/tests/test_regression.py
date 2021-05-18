@@ -109,10 +109,12 @@ def test_Bayesian_Ridge():
                                   'fit_intercept': True,
                                   'normalize': False}])
     regress.fit(x, y)
-    prediction = np.squeeze(regress.predict(x))
+    prediction, pred_std = np.squeeze(regress.predict(x,return_std=True))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
     expected = 6.3894201026386135
+    expected_std = [290.12684166, 290.1432507, 290.13760848, 290.14289498]
     np.testing.assert_almost_equal(rmse, expected)
+    np.testing.assert_array_almost_equal(pred_std[0:4], expected_std)
 
 
 def test_ARD():
@@ -130,10 +132,12 @@ def test_ARD():
                                   'copy_X': True,
                                   'verbose': False}])
     regress.fit(x, y)
-    prediction = np.squeeze(regress.predict(x))
+    prediction, pred_std = np.squeeze(regress.predict(x, return_std=True))
     rmse = np.sqrt(np.average((prediction - y) ** 2))
     expected = 6.714452573751844
+    expected_std = [ 8.55834607, 9.01277664, 9.03318737, 8.61304938]
     np.testing.assert_almost_equal(rmse, expected)
+    np.testing.assert_array_almost_equal(pred_std[0:4],expected_std)
 
 
 def test_LARS():

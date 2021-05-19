@@ -8,8 +8,6 @@ version: '0.1.0.{build}'
 environment:
   matrix:
     - PYTHON: "C:\\Miniconda3-x64\\Scripts\\activate.bat"
-      PYTHON_VERSION: 3.7
-    - PYTHON: "C:\\Miniconda3-x64\\Scripts\\activate.bat"
       PYTHON_VERSION: 3.8
     - PYTHON: "C:\\Miniconda3-x64\\Scripts\\activate.bat"
       PYTHON_VERSION: 3.9

@@ -3,7 +3,7 @@ channels:
   - conda-forge
   - usgs-astrogeology
 dependencies:
-  - python>=3.7
+  - python>=3.8
   - numpy
   - pandas
   - scipy
@@ -15,5 +15,6 @@ dependencies:
   - matplotlib
   - pywavelets
   - pip
+  - networkx>=2.5
   - pip:
     - pysptools

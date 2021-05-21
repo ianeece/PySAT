@@ -125,13 +125,14 @@ def test_cv_local_regression():
               'random_state': [1],
               'tol': [1e-2],
               'l1_ratio':[.1, .7, .95, 1],
-              'verbose':[False]
+              'verbose':[False],
+              'n_jobs':[1]
               }
     paramgrid = list(ParameterGrid(params))
 
     cv_obj = cv.cv(paramgrid)
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df, xcols='wvl', ycol=('comp', 'SiO2'),
-                                                                  method='Local Regression', yrange=[0, 100])
+                                                                  method='Local Regression', yrange=[0, 100],n_jobs=1)
 
     output = output.sort_values(('cv','RMSECV'))
     expected_predicts = [74.09400804, 50.49745952, 53.0, 59.574, 53.014]
@@ -139,9 +140,9 @@ def test_cv_local_regression():
 
     np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out[('predict',predictkeys[0])][0:5]),decimal=4)
     np.testing.assert_array_almost_equal(expected_output_rmsecv, np.array(output[('cv', 'RMSECV')]),decimal=4)
-    assert output.shape == (8, 13)
+    assert output.shape == (8, 14)
     assert len(models) == 8
     assert len(modelkeys) == 8
-    assert modelkeys[0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
+    assert modelkeys[0] == 'Local Regression - SiO2 - (0, 100) {\'fit_intercept\': True, \'l1_ratio\': 0.1, \'n_jobs\': 1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5'
     assert len(predictkeys) == 16
-    assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'
+    assert predictkeys[0] == '"Local Regression- CV -{\'fit_intercept\': True, \'l1_ratio\': 0.1, \'n_jobs\': 1, \'positive\': False, \'random_state\': 1, \'tol\': 0.01} n_neighbors: 5"'

@@ -133,12 +133,12 @@ def test_cv_local_regression():
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df, xcols='wvl', ycol=('comp', 'SiO2'),
                                                                   method='Local Regression', yrange=[0, 100])
 
-    output = output.sort_values(('cv','RMSEC'))
+    output = output.sort_values(('cv','RMSECV'))
     expected_predicts = [74.09400804, 50.49745952, 53.0, 59.574, 53.014]
-    expected_output_rmsec = [10.23372859, 10.32151211, 10.32185558, 10.32432569, 10.89018268, 10.89046596, 10.89234766, 10.9200063]
+    expected_output_rmsecv = [15.26535721, 15.27464797, 15.32878451, 15.66706882, 15.7462821, 15.749214, 15.76943739, 15.77505897]
 
     np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out[('predict',predictkeys[0])][0:5]),decimal=4)
-    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')]),decimal=4)
+    np.testing.assert_array_almost_equal(expected_output_rmsecv, np.array(output[('cv', 'RMSECV')]),decimal=4)
     assert output.shape == (8, 13)
     assert len(models) == 8
     assert len(modelkeys) == 8

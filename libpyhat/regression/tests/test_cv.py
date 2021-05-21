@@ -117,7 +117,7 @@ def test_cv_badfit():
 def test_cv_local_regression():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
     df = df.iloc[0:20,:]  #make data set smaller so this test runs faster
-    df = stratified_folds(df, nfolds=3, sortby=('comp', 'SiO2'))
+    df = stratified_folds(df, nfolds=3, sortby=('comp', 'SiO2'),tiebreaker=('wvl','585.149'))
 
     params = {'n_neighbors': [5, 6],
               'fit_intercept': [True],
@@ -133,11 +133,12 @@ def test_cv_local_regression():
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df, xcols='wvl', ycol=('comp', 'SiO2'),
                                                                   method='Local Regression', yrange=[0, 100])
 
+    output = output.sort_values(('cv','RMSEC'))
     expected_predicts = [51.83360028, 54.24957492, 46.05024927, 54.21137841, 51.314045]
-    expected_output_rmsec = [10.23372859, 10.9200063]
+    expected_output_rmsec = [10.23372859, 10.32151211, 10.32185558, 10.32432569, 10.89018268, 10.89046596, 10.89234766, 10.9200063]
 
     np.testing.assert_array_almost_equal(expected_predicts, np.array(df_out['predict'].iloc[5, 0:5]),decimal=4)
-    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')])[0:2],decimal=4)
+    np.testing.assert_array_almost_equal(expected_output_rmsec, np.array(output[('cv', 'RMSEC')]),decimal=4)
     assert output.shape == (8, 13)
     assert len(models) == 8
     assert len(modelkeys) == 8

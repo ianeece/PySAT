@@ -15,6 +15,7 @@ import pandas as pd
 from libpyhat.regression.regression import regression
 from libpyhat.regression import local_regression
 from joblib import Parallel, delayed
+import copy
 
 warnings.filterwarnings('ignore')
 from sklearn.model_selection import LeaveOneGroupOut
@@ -24,8 +25,9 @@ def RMSE(ypred, y):
 
 
 def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'), method='PLS',
-              yrange=None):
+              yrange=None, n_jobs = -1):
 
+    train_temp = copy.deepcopy(Train)
     print('Permutation ' + str(i + 1) + ' of ' + str(len(paramgrid)))
     paramstring = ''
     for key in paramgrid[i].keys():
@@ -34,8 +36,8 @@ def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'
 
     try:
         # create an iterator for cross validation based on the predefined folds
-        cv_iterator = LeaveOneGroupOut().split(Train[xcols], Train[ycol], Train[('meta', 'Folds')])
-        n_folds = LeaveOneGroupOut().get_n_splits(groups=Train[('meta', 'Folds')])
+        cv_iterator = LeaveOneGroupOut().split(train_temp[xcols], train_temp[ycol], train_temp[('meta', 'Folds')])
+        n_folds = LeaveOneGroupOut().get_n_splits(groups=train_temp[('meta', 'Folds')])
 
     except KeyError:
         print('***No folds found! Did you remember to define folds before running cross validation?***')
@@ -63,8 +65,8 @@ def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'
 
     for train, holdout in cv_iterator:  # Iterate through each of the folds in the training set
 
-        cv_train = Train.iloc[train]  # extract the data to be used to create the model
-        cv_holdout = Train.iloc[holdout]  # extract the data that will be held out of the model
+        cv_train = train_temp.iloc[train]  # extract the data to be used to create the model
+        cv_holdout = train_temp.iloc[holdout]  # extract the data that will be held out of the model
 
         if method == 'Local Regression':
             params = paramgrid[i]
@@ -92,7 +94,7 @@ def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'
             else:
                 y_pred_holdout = cv_holdout[ycol] * np.nan
         # add the predictions to the appropriate column in the training data
-        Train.at[Train.index[holdout], cvcols[0]] = y_pred_holdout
+        train_temp.at[train_temp.index[holdout], cvcols[0]] = y_pred_holdout
         # append the RMSECV to the list
         output_tmp['Fold ' + str(foldcount)] = RMSE(y_pred_holdout, cv_holdout[ycol])
         pass
@@ -103,7 +105,7 @@ def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'
     rmsecv = []
     if cvcols is not None:
         for col in cvcols:
-            rmsecv.append(RMSE(Train[col], Train[ycol]))
+            rmsecv.append(RMSE(train_temp[col], train_temp[ycol]))
             predictkeys = [col[-1]]
         output_tmp['RMSECV'] = rmsecv
 
@@ -118,15 +120,15 @@ def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'
         modelkey = "{} - {} - ({}, {}) {}".format(method, ycol[-1], yrange[0], yrange[1],
                                                   paramgrid[i])
 
-    ypred_train = Train[ycol] * np.nan
+    ypred_train = train_temp[ycol] * np.nan
     if method == 'Local Regression':
-        ypred_train, coeffs, intercepts = model.fit_predict(Train[xcols], Train[ycol], Train[xcols])
+        ypred_train, coeffs, intercepts = model.fit_predict(train_temp[xcols], train_temp[ycol], train_temp[xcols])
     else:
 
-        model.fit(Train[xcols], Train[ycol])
+        model.fit(train_temp[xcols], train_temp[ycol])
         # if the fit is good, then predict the training set
         if model.goodfit:
-            ypred_train = model.predict(Train[xcols])
+            ypred_train = model.predict(train_temp[xcols])
         else:
             model = None
             modelkey = None
@@ -138,19 +140,19 @@ def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'
     else:
         calcol = ('predict', '"' + method + '- Cal -' + str(paramgrid[i]) + '"')
     predictkeys.append(calcol[-1])
-    Train[calcol] = ypred_train
+    train_temp[calcol] = ypred_train
     # append the RMSEC for the current settings to the cllection of all RMSECs
-    output_tmp['RMSEC'] = RMSE(ypred_train, Train[ycol])
+    output_tmp['RMSEC'] = RMSE(ypred_train, train_temp[ycol])
 
     output = output_tmp
-    return output, model, modelkey, predictkeys, Train['predict']
+    return output, model, modelkey, predictkeys, train_temp['predict']
 
 class cv:
     def __init__(self, paramgrid):
         self.paramgrid = paramgrid
 
     def do_cv(self, Train, xcols='wvl', ycol=('comp', 'SiO2'), method='PLS',
-              yrange=None):
+              yrange=None, n_jobs = -1):
 
         if yrange is None:
             yrange = [np.min(Train[ycol]),np.max(Train[ycol])]
@@ -158,7 +160,7 @@ class cv:
         args = list(range(len(self.paramgrid)))
         kwargs = {'paramgrid':self.paramgrid, 'Train':Train, 'xcols': xcols, 'ycol': ycol, 'method': method, 'yrange':yrange}
 
-        results = Parallel(n_jobs= -1)(delayed(cv_core)(i, **kwargs) for i in args)
+        results = Parallel(n_jobs= n_jobs)(delayed(cv_core)(i, **kwargs) for i in args)
 
         models = []
         modelkeys = []
@@ -184,7 +186,7 @@ class cv:
         cv_predicts.columns = [('predict',i) for i in cv_predicts.columns]
         Train = pd.concat((Train,cv_predicts),axis=1)
 
-        #make the columns of the output data drame multi-indexed
+        #make the columns of the output data frame multi-indexed
         cols = output.columns.values
         cols = [('cv', i) for i in cols]
         output.columns = pd.MultiIndex.from_tuples(cols)

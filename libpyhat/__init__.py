@@ -1,10 +1,11 @@
-__version__ = "0.1.8"
+__version__ = "0.1.9"
 
 import libpyhat
 from libpyhat import derived
 from libpyhat import transform
 from libpyhat import regression
 from libpyhat import data
+from libpyhat import examples
 from libpyhat import analytics
 from libpyhat import pyhat_io
 from libpyhat.data.spectra import Spectra

@@ -27,7 +27,7 @@ class LocalRegression:
     """This class implements "local" regression. Given a set of training data and a set of unknown data,
            iterate through each unknown spectrum, find the nearest training spectra, and generate a model.
            Each of these local models is optimized using built-in cross validation methods from scikit."""
-    def __init__(self, params, n_neighbors = 250, verbose = True):
+    def __init__(self, params, n_neighbors = 250, verbose = True, n_jobs=-1):
         """Initialize LocalRegression
 
         Arguments:
@@ -43,6 +43,7 @@ class LocalRegression:
 
         self.neighbors = NearestNeighbors(n_neighbors=n_neighbors)
         self.verbose = verbose
+        self.n_jobs = n_jobs
 
     def fit_predict(self,x_train,y_train, x_predict):
         """Use local regression to predict values for unknown data.
@@ -64,7 +65,7 @@ class LocalRegression:
                   'model': self.model,
                   'neighbors': self.neighbors,
                   'verbose':True}
-        results = Parallel(n_jobs=-1)(delayed(fit_predict_parallel)(i, **kwargs) for i in args)
+        results = Parallel(n_jobs=self.n_jobs)(delayed(fit_predict_parallel)(i, **kwargs) for i in args)
 
         for i in results:
             predictions.append(i[0])

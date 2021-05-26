@@ -56,3 +56,4 @@ deploy:
   script: bash deployment/deploy.sh $PYTHON_VERSION
   on:
     branch: master
+

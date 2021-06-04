@@ -188,11 +188,16 @@ def test_MNF():
     np.testing.assert_array_almost_equal(expected_scores, score_result)
 
     mnf = MNF()
+    x = np.array(df['wvl'])
     try:
         comps, res_spect = mnf.fit_transform('foo') #test the case where the wrong type of data is passed
+
     except:
-        x = np.array(df['wvl'])
-        comps, res_spect = mnf.fit_transform(x) #test the case where a numpy array is passed
-        score_result = np.sort(np.sort(comps[0,:]))
-        expected_scores = [-36.6691721, -5.29645881, -3.63660052, 598.27972428]
-        np.testing.assert_array_almost_equal(expected_scores, score_result)
+        try:
+            comps, res_spect = mnf.fit_transform(x.T)  # test the case where # of wvls is > # of samples
+        except:
+
+            comps, res_spect = mnf.fit_transform(x) #test the case where a numpy array is passed
+            score_result = np.sort(np.sort(comps[0,:]))
+            expected_scores = [-36.6691721, -5.29645881, -3.63660052, 598.27972428]
+            np.testing.assert_array_almost_equal(expected_scores, score_result)

@@ -21,17 +21,22 @@ class MNF():
             raise ValueError("Input for MNF must inherit from pd.Series or np.ndarray")
     
         cube_data, num_dimensions = make_3d(np_data)
-    
-        # Open and apply MNF module
-        pysp_mnf = mnf()
-        res = pysp_mnf.apply(cube_data)
-        res_spect = pysp_mnf.inverse_transform(res)
-        components = pysp_mnf.get_components(self.n_components)
-        # Return result in dimensionality of input
-        if num_dimensions == 2:
-            return np.squeeze(components), np.squeeze(res_spect)
+
+        #check data shape
+        if cube_data.shape[0]*cube_data.shape[1]>cube_data.shape[2]:
+
+            # Open and apply MNF module
+            pysp_mnf = mnf()
+            res = pysp_mnf.apply(cube_data)
+            res_spect = pysp_mnf.inverse_transform(res)
+            components = pysp_mnf.get_components(self.n_components)
+            # Return result in dimensionality of input
+            if num_dimensions == 2:
+                return np.squeeze(components), np.squeeze(res_spect)
+            else:
+                return components, res_spect
         else:
-            return components, res_spect
+            raise ValueError("For MNF, # of samples must be greater than # of spectral channels")
     
 def make_3d(data):
     # Ensure 3 dimensional input for MNF

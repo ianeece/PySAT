@@ -87,9 +87,9 @@ def test_dimred_JADE():
     expected_loadings = [0.56247385, 0.19292341, 3.42289881]
     expected_scores = [174708.34499912, 125682.55985134, 145155.40758151]
 
-    assert df['JADE-ICA'].shape == (103, 3)
+    assert df['JADE-ICA (wvl)'].shape == (103, 3)
     np.testing.assert_almost_equal(expected_loadings, np.squeeze(np.array(dimred_obj.ica_jade_loadings[:,0])))
-    np.testing.assert_array_almost_equal(expected_scores, np.array(df['JADE-ICA'].iloc[0,:]))
+    np.testing.assert_array_almost_equal(expected_scores, np.array(df['JADE-ICA (wvl)'].iloc[0,:]))
 
 def test_dimred_LLE():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -101,9 +101,9 @@ def test_dimred_LLE():
     expected_err = 2.0687806439705738e-05
     expected_scores = [0.11088153, 0.01215013, -0.03551393]
 
-    assert df['LLE'].shape == (103, 3)
+    assert df['LLE (wvl)'].shape == (103, 3)
     np.testing.assert_almost_equal(expected_err, dimred_obj.reconstruction_error_)
-    np.testing.assert_array_almost_equal(np.abs(expected_scores), np.abs(np.array(df['LLE'].iloc[0, :])),decimal=4)
+    np.testing.assert_array_almost_equal(np.abs(expected_scores), np.abs(np.array(df['LLE (wvl)'].iloc[0, :])),decimal=4)
 
 def test_dimred_tSNE():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -119,9 +119,9 @@ def test_dimred_tSNE():
     expected_div = 0.38829776644706726
     expected_scores = [9938.469727, -802.161682]
 
-    assert df['t-SNE'].shape == (103, 2)
+    assert df['t-SNE (wvl)'].shape == (103, 2)
     np.testing.assert_almost_equal(expected_div, dimred_obj.kl_divergence_)
-    np.testing.assert_array_almost_equal(expected_scores, np.array(df['t-SNE'].iloc[0, :]))
+    np.testing.assert_array_almost_equal(expected_scores, np.array(df['t-SNE (wvl)'].iloc[0, :]))
 
 def test_dimred_FastICA():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -131,9 +131,9 @@ def test_dimred_FastICA():
     expected_comps = [-2.190278e-05,  1.498101e-06,  9.082887e-07]
     expected_scores = [0.03252833, -0.03749623, -0.11434307]
 
-    assert df['FastICA'].shape == (103, 3)
+    assert df['FastICA (wvl)'].shape == (103, 3)
     np.testing.assert_array_almost_equal(np.sort(expected_comps), np.sort(dimred_obj.components_[:, 0]), decimal=5)
-    np.testing.assert_array_almost_equal(np.sort(expected_scores), np.sort(np.array(df['FastICA'].iloc[0, :])), decimal=5)
+    np.testing.assert_array_almost_equal(np.sort(expected_scores), np.sort(np.array(df['FastICA (wvl)'].iloc[0, :])), decimal=5)
 
 def test_dimred_PCA():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -142,9 +142,9 @@ def test_dimred_PCA():
     df, dimred_obj = dim_red.dim_red(df, 'wvl', 'PCA', [], params)
     expected_expl_var = [0.96051211, 0.01683739, 0.01471955]
     expected_scores = [10092.96265442, -628.16699776, -359.06894452]
-    assert df['PCA'].shape == (103,3)
+    assert df['PCA (wvl)'].shape == (103,3)
     np.testing.assert_array_almost_equal(expected_expl_var, dimred_obj.explained_variance_ratio_)
-    np.testing.assert_array_almost_equal(expected_scores,np.array(df['PCA'].iloc[0,:]))
+    np.testing.assert_array_almost_equal(expected_scores,np.array(df['PCA (wvl)'].iloc[0,:]))
 
 def test_dimred_NMF():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
@@ -156,9 +156,9 @@ def test_dimred_NMF():
     df, dimred_obj = dim_red.dim_red(df, 'wvl', 'NMF', [], params)
     expected_comps = [10.27191532, 34.62489686, 3.06822373]
     expected_scores = [49.42458628, 3.9910722, 27.03100371]
-    assert df['NMF'].shape == (103,3)
+    assert df['NMF (wvl)'].shape == (103,3)
     np.testing.assert_array_almost_equal(expected_comps, dimred_obj.components_[:,0])
-    np.testing.assert_array_almost_equal(expected_scores,np.array(df['NMF'].iloc[0,:]))
+    np.testing.assert_array_almost_equal(expected_scores,np.array(df['NMF (wvl)'].iloc[0,:]))
 
 def test_dimred_LDA():
 
@@ -174,30 +174,30 @@ def test_dimred_LDA():
     df, dimred_obj = dim_red.dim_red(df, 'wvl', 'LDA', [], params, ycol='K-Means')
     expected_coefs = np.sort([0.02209121, 0.0016516, 0.01139357, 0.06448139, 0.07085655])
     expected_scores = np.sort([11.89340048, 0.41598425, 0.22964169])
-    assert df['LDA'].shape == (103, 3)
+    assert df['LDA (wvl)'].shape == (103, 3)
     # +/- sign and order of these values can vary, use sort and abs to stabilize things
     np.testing.assert_array_almost_equal(expected_coefs, np.sort(np.abs(dimred_obj.coef_[:, 0])))
-    np.testing.assert_array_almost_equal(expected_scores, np.sort(np.abs(np.array(df['LDA'].iloc[0, :]))))
+    np.testing.assert_array_almost_equal(expected_scores, np.sort(np.abs(np.array(df['LDA (wvl)'].iloc[0, :]))))
 
-def test_MNF():
+def test_dimred_MNF():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
     params = {'n_components':4}
     df, dimred_obj = dim_red.dim_red(df, 'wvl','MNF', [], params)
-    score_result = np.sort(np.array(df['MNF'].iloc[0,:]))
+    score_result = np.sort(np.array(df['MNF (wvl)'].iloc[0,:]))
     expected_scores = [-36.6691721, -5.29645881, -3.63660052, 598.27972428]
     np.testing.assert_array_almost_equal(expected_scores, score_result)
 
     mnf = MNF()
     x = np.array(df['wvl'])
     try:
-        comps, res_spect = mnf.fit_transform('foo') #test the case where the wrong type of data is passed
+        comps = mnf.fit_transform('foo') #test the case where the wrong type of data is passed
 
     except:
         try:
-            comps, res_spect = mnf.fit_transform(x.T)  # test the case where # of wvls is > # of samples
+            comps = mnf.fit_transform(x.T)  # test the case where # of wvls is > # of samples
         except:
 
-            comps, res_spect = mnf.fit_transform(x) #test the case where a numpy array is passed
+            comps = mnf.fit_transform(x) #test the case where a numpy array is passed
             score_result = np.sort(np.sort(comps[0,:]))
             expected_scores = [-36.6691721, -5.29645881, -3.63660052, 598.27972428]
             np.testing.assert_array_almost_equal(expected_scores, score_result)

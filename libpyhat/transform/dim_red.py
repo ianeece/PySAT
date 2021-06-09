@@ -51,11 +51,11 @@ def dim_red(df, xcol, method, params, kws, load_fit=None, ycol=None):
             if method == 't-SNE':
                 dim_red_result = do_dim_red.fit_transform(xdata)
             if method == 'MNF':
-                dim_red_result, mnf_spectra = do_dim_red.fit_transform(xdata)
+                dim_red_result = do_dim_red.fit_transform(xdata)
 
     for i in list(range(1, dim_red_result.shape[
                                1] + 1)):  # will need to revisit this for other methods that don't use n_components to make sure column names still mamke sense
-        df[(method, method+'-'+str(i))] = dim_red_result[:, i - 1]
+        df[(method+' ('+xcol+')', method+'-'+str(i))] = dim_red_result[:, i - 1]
 
     return df, do_dim_red
 

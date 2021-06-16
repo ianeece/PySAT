@@ -10,10 +10,11 @@ dependencies:
   - scikit-learn
   - multipledispatch
   - yaml
-  - pvl=0.3.0
-  - plio=1.2.4
+  - pvl>=1.0
+  - plio>=1.3
   - matplotlib
   - pywavelets
   - pip
+  - networkx>=2.5
   - pip:
     - pysptools

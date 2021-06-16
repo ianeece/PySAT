@@ -11,3 +11,5 @@ Credits
 
 Contributors
 ------------
+
+* Travis S.J. Gabriel <tgabriel@usgs.gov>

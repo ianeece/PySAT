@@ -28,6 +28,10 @@ def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'
               yrange=None, n_jobs = -1):
 
     train_temp = copy.deepcopy(Train)
+    try:
+        train_temp = train_temp.drop('predict', axis=1)
+    except:
+        pass
     print('Permutation ' + str(i + 1) + ' of ' + str(len(paramgrid)))
     paramstring = ''
     for key in paramgrid[i].keys():

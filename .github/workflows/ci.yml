@@ -60,7 +60,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Deploy if master
+      run: bash deployment/deploy.sh $PYTHON_VERSION
       shell: bash
-        bash deployment/deploy.sh $PYTHON_VERSION
-      if: steps.extract_branch.outputs.branch == 'master'
+      if: ${{ steps.extract_branch.outputs.branch == 'master' }}
 

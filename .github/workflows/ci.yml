@@ -2,13 +2,9 @@ name: Build Test and Deploy
 
 on:
   pull_request:
-    branches:
-      - master
-      - dev
+    branches: [master, dev]
   push:
-    branches:
-      - master
-      - dev
+    branches: [master, dev]
 
 jobs:
   Build-and-text:

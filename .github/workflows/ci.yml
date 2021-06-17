@@ -37,7 +37,7 @@ jobs:
       run: |
         conda install pip setuptools
         conda install --quiet pytest pytest-dov nbsphinx
-        pop install coveralls
+        pip install coveralls
         python setup.py install
     - name: Check build environment
       run: |

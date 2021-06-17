@@ -58,5 +58,5 @@ jobs:
     - name: Deploy if master
       run: bash deployment/deploy.sh $PYTHON_VERSION
       shell: bash
-      if: ${{ steps.extract_branch.outputs.branch == 'master' }}
+      if: steps.extract_branch.outputs.branch == 'master'
 

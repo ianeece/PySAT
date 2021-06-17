@@ -29,7 +29,7 @@ jobs:
           miniconda-version: "latest"
           mamba-version: "*"
           use-mamba: true
-          channels: [conda-forge, usgs-astrogeology]
+          channels: conda-forge, usgs-astrogeology
           channel-priority: strict
           activate-environment: test_env
           environment-file: environment.yml
@@ -37,7 +37,7 @@ jobs:
       - name: Install Python Package
         run: |
           conda install pip setuptools
-          conda install --quiet pytest pytest-dov nbsphinx
+          conda install --quiet pytest pytest-cov nbsphinx
           pip install coveralls
           python setup.py install
       - name: Check build environment

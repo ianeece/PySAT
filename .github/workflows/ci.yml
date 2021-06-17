@@ -54,12 +54,3 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
           verbose: true
-  deployment:
-    name: Deployment
-    runs-on: ${{ matrix.os }}
-    steps:
-    - name: Deploy if master
-      run: bash deployment/deploy.sh $PYTHON_VERSION
-      shell: bash
-      if: steps.extract_branch.outputs.branch == 'master'
-

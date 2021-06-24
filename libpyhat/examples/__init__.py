@@ -41,6 +41,8 @@ def get_path(example_name):  # pragma: no cover
     elif example_name == "":
         return os.path.join(base, 'examples', example_name)
     else:
+        print('Available examples:')
+        print(file_2_dir)
         raise KeyError(example_name + ' not found in built-in examples')
 
 

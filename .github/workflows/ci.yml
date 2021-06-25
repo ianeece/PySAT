@@ -47,6 +47,11 @@ jobs:
       - name: Test Python Package
         run: |
           pytest --cov libpyhat
+      - name: Deploy if master
+        run: |
+          bash deployment/deploy.sh $PYTHON_VERSION
+        shell: bash
+        if: ${{ steps.extract_branch.outputs.branch == 'master' }}
 #          coveralls
 #      - name: Upload Coverage
 #        uses: codecov/codecov-action@v1

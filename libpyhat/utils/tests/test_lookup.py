@@ -8,4 +8,3 @@ def test_lookup():
     assert result[('meta', 'foo')][result[('meta', 'LIBS ID')] == 'LIB00053'].values[0] == 'k'
     assert result[('meta', 'foo')][result[('meta', 'LIBS ID')] == 'LIB00140'].values[0] == 'e'
 
-test_lookup()

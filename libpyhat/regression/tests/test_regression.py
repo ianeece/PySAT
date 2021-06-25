@@ -7,12 +7,15 @@ from sklearn.gaussian_process.kernels import RBF, Matern
 from sklearn.preprocessing import StandardScaler
 np.random.seed(1)
 
-df = pd.read_csv(get_path('test_data.csv'),header=[0,1])
-df = norm(df,[[580,600]])
-x = df['wvl']
-y = df[('comp','SiO2')]
+def read_test_data():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
+    df = norm(df, [[580, 600]])
+    x = df['wvl']
+    y = df[('comp', 'SiO2')]
+    return x,y
 
 def test_PLS():
+    x,y = read_test_data()
     regress = regression(method=['PLS'],
                          params=[{'n_components': 3, 'scale': False}])
     regress.fit(x, y)
@@ -31,12 +34,14 @@ def test_PLS():
 
 
 def test_badfit():
+    x, y = read_test_data()
     regress = regression(method=['OMP'],
                          params=[{'n_nonzero_coefs': 1000}])
     regress.fit(x, y)
     assert regress.goodfit == False
 
 def test_OLS():
+    x, y = read_test_data()
     regress = regression(method=['OLS'],
                          params=[{'fit_intercept': True,
                                   'normalize': False,
@@ -54,6 +59,7 @@ def test_OLS():
 
 
 def test_OMP():
+    x, y = read_test_data()
     regress = regression(method=['OMP'], params=[{'fit_intercept': True}])
     regress.fit(x, y)
     prediction = np.squeeze(regress.predict(x))
@@ -62,6 +68,7 @@ def test_OMP():
     np.testing.assert_almost_equal(rmse, expected)
 
 def test_LASSO():
+    x, y = read_test_data()
     regress = regression(method=['LASSO'],
                          params=[{'alpha': 1.0,
                                   'fit_intercept': True,
@@ -74,6 +81,7 @@ def test_LASSO():
 
 
 def test_Elastic_Net():
+    x, y = read_test_data()
     regress = regression(method=['Elastic Net'],
                          params=[{'alpha': 1.0,
                                   'l1_ratio': 0.5,
@@ -88,6 +96,7 @@ def test_Elastic_Net():
 
 
 def test_Ridge():
+    x, y = read_test_data()
     regress = regression(method=['Ridge'],
                          params=[{'alpha': 1.0,
                                   'fit_intercept': True}])
@@ -98,6 +107,7 @@ def test_Ridge():
     np.testing.assert_almost_equal(rmse, expected)
 
 def test_Bayesian_Ridge():
+    x, y = read_test_data()
     regress = regression(method=['BRR'],
                          params=[{'n_iter': 300,
                                   'tol': 0.001,
@@ -118,6 +128,7 @@ def test_Bayesian_Ridge():
 
 
 def test_ARD():
+    x, y = read_test_data()
     regress = regression(method=['ARD'],
                          params=[{'n_iter': 300,
                                   'tol': 0.001,
@@ -141,6 +152,7 @@ def test_ARD():
 
 
 def test_LARS():
+    x, y = read_test_data()
     regress = regression(method=['LARS'],
                          params=[{'n_nonzero_coefs': 5,
                                   'fit_intercept': True,
@@ -157,6 +169,7 @@ def test_LARS():
 
 
 def test_SVR():
+    x, y = read_test_data()
     regress = regression(method=['SVR'], params=[{'C': 1.0, 'epsilon': 0.1,
                                                    'kernel': 'rbf',
                                                    'degree': 0,
@@ -175,6 +188,7 @@ def test_SVR():
 
 
 def test_KRR():
+    x, y = read_test_data()
     regress = regression(method=['KRR'],
                          params=[{'alpha': 0,
                                   'kernel': 'linear',
@@ -191,6 +205,7 @@ def test_KRR():
     np.testing.assert_almost_equal(rmse, expected,decimal=5)
 
 def test_GBR():
+    x, y = read_test_data()
     regress = regression(method=['GBR'],
                          params = [{'learning_rate':0.1,
                                    'n_estimators':10,
@@ -209,6 +224,7 @@ def test_GBR():
     np.testing.assert_almost_equal(rmse, expected, decimal=5)
 
 def test_GP():
+    x, y = read_test_data()
     regress = regression(method=['GP'],
                          params = [{'kernel': Matern(length_scale=1.0, nu=3.0),
                                     'alpha':1e-10,

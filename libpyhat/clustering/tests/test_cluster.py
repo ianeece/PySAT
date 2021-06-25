@@ -4,10 +4,11 @@ from libpyhat.examples import get_path
 import libpyhat.clustering.cluster as cluster
 import libpyhat.transform.norm as norm
 np.random.seed(1)
-df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
-df = norm.norm(df,[[585,600]])
 
 def test_spectral():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
+    df = norm.norm(df, [[585, 600]])
+
     kws = {     'n_clusters': 3,
                 'n_init': 10,
                 'affinity': 'rbf',
@@ -23,6 +24,9 @@ def test_spectral():
     assert cluster_count == [8,32,63]
 
 def test_kmeans():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
+    df = norm.norm(df, [[585, 600]])
+
     kws = {'n_clusters': 3,
           'n_init': 10,
           'max_iter': 100,

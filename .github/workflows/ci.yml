@@ -26,6 +26,12 @@ jobs:
         uses: EthanSK/git-branch-name-action@v1
       - name: Echo the branch name
         run: echo "Branch name ${GIT_BRANCH_NAME}"
+      - name: Master branch message
+        if: ${GIT_BRANCH_NAME}=='master'
+        run: echo 'We are on the master branch!'
+      - name: Other branch message
+        if: ${GIT_BRANCH_NAME}!='master'
+        run: echo 'Not on the master branch'
       - uses: actions/checkout@v2
       - name: Setup conda env
         uses: conda-incubator/setup-miniconda@v2

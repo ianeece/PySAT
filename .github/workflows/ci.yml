@@ -22,9 +22,10 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
-      - name: Print message
-        run: |
-            echo github.ref
+      - name: Git Branch Name
+        uses: EthanSK/git-branch-name-action@v1
+      - name: Echo the branch name
+        run: echo "Branch name ${GIT_BRANCH_NAME}"
       - uses: actions/checkout@v2
       - name: Setup conda env
         uses: conda-incubator/setup-miniconda@v2

@@ -22,6 +22,10 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
+      - name: Git Branch Name
+        uses: EthanSK/git-branch-name-action@v1
+      - name: Echo the branch name
+        run: echo "Branch name ${GIT_BRANCH_NAME}"
       - uses: actions/checkout@v2
       - name: Setup conda env
         uses: conda-incubator/setup-miniconda@v2
@@ -47,11 +51,16 @@ jobs:
       - name: Test Python Package
         run: |
           pytest --cov libpyhat
-      - name: Deploy if master
+      - name: Deploy on the master branch
+        if: ${{ env.GIT_BRANCH_NAME == 'master' }}
         run: |
+          echo 'We are on the master branch!'
           bash deployment/deploy.sh $PYTHON_VERSION
         shell: bash
-        if: ${{ steps.extract_branch.outputs.branch == 'master' }}
+      - name: Other branch message
+        if: ${{ env.GIT_BRANCH_NAME != 'master' }}
+        run: echo 'Not on the master branch - not deploying'
+
 #          coveralls
 #      - name: Upload Coverage
 #        uses: codecov/codecov-action@v1

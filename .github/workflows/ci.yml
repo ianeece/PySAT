@@ -48,12 +48,12 @@ jobs:
         run: |
           pytest --cov libpyhat
       - name: Deploy if master
-        if: contains(github.ref, "master")
+        if: ${{contains(github.ref, "master") == True}}
         run: |
           bash deployment/deploy.sh $PYTHON_VERSION
         shell: bash
       - name: Message if not master
-        if: False == contains(github.ref, "master")
+        if: ${{contains(github.ref, "master") == False}}
         run: |
           echo "Not on the master branch: not deploying"
           

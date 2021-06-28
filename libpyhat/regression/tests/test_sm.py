@@ -3,10 +3,9 @@ import pandas as pd
 from libpyhat.examples import get_path
 import libpyhat.regression.sm as sm
 import libpyhat.regression.regression as reg
-np.random.seed(1)
-
 
 def test_sm_blend():
+    np.random.seed(1)
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
     x = df['wvl']
     y = df[('comp','SiO2')]
@@ -31,7 +30,7 @@ def test_sm_blend():
     rmse = np.sqrt(np.average((blended_predictions - df[('comp', 'SiO2')]) ** 2))
     np.testing.assert_almost_equal(rmse, 12.703434300128926, decimal=5)
 
-    blended_predictions = sm_obj.do_blend(np.array(predictions),truevals=np.array(df[('comp','SiO2')])) #with optimization
+    blended_predictions = sm_obj.do_blend(np.array(predictions),truevals=np.array(df[('comp','SiO2')]), verbose=False) #with optimization
     rmse = np.sqrt(np.average((blended_predictions-df[('comp','SiO2')])**2))
     expected_blendranges = [-9999., 35.21056413, 50.44074802, 60.25692472, 120.39265394, 9999.]
     np.testing.assert_almost_equal(rmse, 9.89378907900936, decimal=5)

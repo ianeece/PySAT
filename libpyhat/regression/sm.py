@@ -13,7 +13,7 @@ class sm:
         self.blendranges = blendranges
         self.random_seed = random_seed
 
-    def do_blend(self, predictions, truevals=None):
+    def do_blend(self, predictions, truevals=None, verbose = True):
         # create the array indicating which models to blend for each blend range
         # For three models, this creates an array like: [[0,0],[0,1],[1,1],[1,2],[2,2]]
         # Which indicates that in the first range, just use model 0
@@ -48,8 +48,9 @@ class sm:
                 if result.fun < self.rmse:
                     self.blendranges = result.x
                     self.rmse = result.fun
-                    print(self.blendranges.sort())
-                    print('RMSE ='+str(self.rmse))
+                    if verbose==True:
+                        print(self.blendranges.sort())
+                        print('RMSE ='+str(self.rmse))
                 else:
                     pass
                 i=i+1

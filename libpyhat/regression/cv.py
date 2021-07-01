@@ -24,8 +24,7 @@ def RMSE(ypred, y):
     return np.sqrt(np.mean((np.squeeze(ypred) - np.squeeze(y)) ** 2))
 
 
-def cv_core(i, paramgrid = None, Train = None, xcols='wvl', ycol=('comp', 'SiO2'), method='PLS',
-              yrange=None, n_jobs = -1):
+def cv_core(i, paramgrid, Train, xcols, ycol, method, yrange):
 
     train_temp = copy.deepcopy(Train)
     try:
@@ -162,10 +161,8 @@ class cv:
             yrange = [np.min(Train[ycol]),np.max(Train[ycol])]
 
         args = list(range(len(self.paramgrid)))
-        kwargs = {'paramgrid':self.paramgrid, 'Train':Train, 'xcols': xcols, 'ycol': ycol, 'method': method, 'yrange':yrange}
-
-        results = Parallel(n_jobs= n_jobs)(delayed(cv_core)(i, **kwargs) for i in args)
-
+        results = Parallel(n_jobs= n_jobs)(delayed(cv_core)(i, self.paramgrid, Train, xcols, ycol, method, yrange) for i in args)
+        
         models = []
         modelkeys = []
         predictkeys = []

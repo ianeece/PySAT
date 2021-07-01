@@ -4,10 +4,6 @@ import pandas as pd
 from libpyhat.examples import get_path
 np.random.seed(1)
 
-df = pd.read_csv(get_path('test_data.csv'),header=[0,1])
-df = df[df[('meta','LIBS ID')]=='LIB00041']
-
-
 def test_peak_area():
     df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
     df = df[df[('meta', 'LIBS ID')] == 'LIB00041']

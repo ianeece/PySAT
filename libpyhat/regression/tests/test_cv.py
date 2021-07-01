@@ -30,7 +30,7 @@ def test_cv():
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=('comp','SiO2'),method='PLS',
                                                                   yrange=None)
 
-    expected_predicts = [56.55707481, 57.93716105, 59.34785052, 60.59708391, 55.83934129, 56.7456989 ]
+    expected_predicts = [30.0, 56.7456989, 60.0, 62.14871191, 56.55707480648039, 57.93716105008266, 59.34785052063107, 60.59708391191231, 55.83934128605033, 56.745698899065]
     expected_output_rmsec = [18.6509206, 14.64015186, 13.80182457]
 
     np.testing.assert_array_almost_equal(expected_predicts,np.array(df_out['predict'].iloc[0,:]))
@@ -110,7 +110,7 @@ def test_cv_badfit():
     df_out, output, models, modelkeys, predictkeys = cv_obj.do_cv(df,xcols='wvl',ycol=[('comp','SiO2')],method='OMP',
                                                                   yrange=None)
     assert np.isnan(predictions.iloc[0,0])
-    assert np.isnan(df_out['predict'].iloc[0,0])
+    assert np.isnan(df_out['predict'].iloc[0,4])
 
 
 

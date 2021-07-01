@@ -66,8 +66,5 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           # Path to lcov file
           path-to-lcov: ./coverage/lcov.info
-          # Set to true if you are running parallel jobs, then use "parallel_finished: true" for the last action.
-          parallel: True
-          # Set to true for the last action when using "parallel: true".
-          parallel-finished: True
+          
     

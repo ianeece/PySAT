@@ -60,9 +60,14 @@ jobs:
       - name: Other branch message
         if: ${{ env.GIT_BRANCH_NAME != 'master' }}
         run: echo 'Not on the master branch - not deploying'
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v1
+      - name: Coveralls GitHub Action
+        uses: coverallsapp/github-action@v1.1.2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          verbose: true
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          # Path to lcov file
+          path-to-lcov: ./coverage/lcov.info
+          # Set to true if you are running parallel jobs, then use "parallel_finished: true" for the last action.
+          parallel: True
+          # Set to true for the last action when using "parallel: true".
+          parallel-finished: True
+    

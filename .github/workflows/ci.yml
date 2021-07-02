@@ -42,18 +42,22 @@ jobs:
         run: |
           conda install pip setuptools
           conda install --quiet pytest pytest-cov nbsphinx
-          pip install coveralls
           python setup.py install
       - name: Check build environment
         run: |
           conda list
           conda info
       - name: Test Python Package
-        env: |
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          pytest --cov libpyhat
-          coveralls
+        run:
+          pytest --cov libpyhat --cov-report=xml
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          verbose: true
       - name: Deploy on the master branch
         if: ${{ env.GIT_BRANCH_NAME == 'master' }}
         run: |
@@ -63,11 +67,6 @@ jobs:
       - name: Other branch message
         if: ${{ env.GIT_BRANCH_NAME != 'master' }}
         run: echo 'Not on the master branch - not deploying'
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          # Path to lcov file
-          path-to-lcov: ./coverage/lcov.info
+      
           
     

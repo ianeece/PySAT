@@ -49,6 +49,8 @@ jobs:
           conda list
           conda info
       - name: Test Python Package
+        env: |
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pytest --cov libpyhat
           coveralls

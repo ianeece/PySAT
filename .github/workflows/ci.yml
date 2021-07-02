@@ -51,6 +51,7 @@ jobs:
       - name: Test Python Package
         run: |
           pytest --cov libpyhat
+          coveralls
       - name: Deploy on the master branch
         if: ${{ env.GIT_BRANCH_NAME == 'master' }}
         run: |

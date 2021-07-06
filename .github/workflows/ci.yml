@@ -1,0 +1,70 @@
+name: Build Test and Deploy
+
+on:
+  pull_request:
+    branches:
+      - master
+      - dev
+  push:
+    branches:
+      - master
+      - dev
+
+jobs:
+  Build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.7", "3.8", "3.9"]
+    defaults:
+      run:
+        shell: bash -l {0}
+    steps:
+      - name: Git Branch Name
+        uses: EthanSK/git-branch-name-action@v1
+      - name: Echo the branch name
+        run: echo "Branch name ${GIT_BRANCH_NAME}"
+      - uses: actions/checkout@v2
+      - name: Setup conda env
+        uses: conda-incubator/setup-miniconda@v2
+        with: 
+          miniconda-version: "latest"
+          mamba-version: "*"
+          use-mamba: true
+          channels: conda-forge, usgs-astrogeology
+          channel-priority: strict
+          activate-environment: test_env
+          environment-file: environment.yml
+          python-version: ${{ matrix.python-version }}
+      - name: Install Python Package
+        run: |
+          conda install pip setuptools
+          conda install --quiet pytest pytest-cov nbsphinx
+          python setup.py install
+      - name: Check build environment
+        run: |
+          conda list
+          conda info
+      - name: Test Python Package
+        run: |
+          pytest --cov libpyhat --cov-report=xml
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
+          verbose: true
+      - name: Deploy on the master branch
+        if: ${{ env.GIT_BRANCH_NAME == 'master' }}
+        run: |
+          echo 'We are on the master branch!'
+          bash deployment/deploy.sh $PYTHON_VERSION
+        shell: bash
+      - name: Other branch message
+        if: ${{ env.GIT_BRANCH_NAME != 'master' }}
+        run: echo 'Not on the master branch - not deploying'
+      
+          
+    

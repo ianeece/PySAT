@@ -5,14 +5,16 @@ from libpyhat.transform import cal_tran, norm
 from libpyhat.transform.caltran_utils import prepare_data
 np.random.seed(1)
 
-data1 = pd.read_csv(get_path('caltran_test1.csv'),header=[0,1])
-data2 = pd.read_csv(get_path('caltran_test2.csv'),header=[0,1])
-data1, data2 = prepare_data(data1,data2,'Target','Target')
 
-#normalize the data for numerical stability
-data1 = norm.norm(data1,[[240,250]])
-data2 = norm.norm(data2,[[240,250]])
+def read_test_data():
+    data1 = pd.read_csv(get_path('caltran_test1.csv'), header=[0, 1])
+    data2 = pd.read_csv(get_path('caltran_test2.csv'), header=[0, 1])
+    data1, data2 = prepare_data(data1, data2, 'Target', 'Target')
 
+    # normalize the data for numerical stability
+    data1 = norm.norm(data1, [[240, 250]])
+    data2 = norm.norm(data2, [[240, 250]])
+    return data1, data2
 
 def cal_tran_helper(data1,data2,params, expected, single_spect = False):
     ct = cal_tran.cal_tran(params)
@@ -27,6 +29,7 @@ def cal_tran_helper(data1,data2,params, expected, single_spect = False):
         np.testing.assert_array_almost_equal(np.array(result,dtype=float)[4], expected)
 
 def test_no_transform():
+    data1, data2 = read_test_data()
     params = {'method':'None'}
     ct = cal_tran.cal_tran(params)
     ct.derive_transform(data1['wvl'], data2['wvl'])
@@ -34,6 +37,7 @@ def test_no_transform():
     pd.testing.assert_frame_equal(data1['wvl'], result)
 
 def test_undefined():
+    data1, data2 = read_test_data()
     params = {'method':'foo'}
     ct = cal_tran.cal_tran(params)
     assert ct.ct_obj == None
@@ -44,21 +48,25 @@ def test_undefined():
     assert ct.ct_obj.proj_to_B == None
 
 def test_ratio():
+    data1, data2 = read_test_data()
     params = {'method':'Ratio'}
     expected = [ 0.318841,  0.02854 ,  0.065888,  0.028543, -0.036599,  0.028683,  0.076133]
     cal_tran_helper(data1, data2, params, expected)
 
 def test_piecewise_ds():
+    data1, data2 = read_test_data()
     params = {'method': 'PDS - Piecewise DS', 'win_size':5,'pls':False}
     expected = [0.178173, 0.022496, 0.053328, 0.055634, 0.078359, 0.042854, 0.080929]
     cal_tran_helper(data1, data2, params, expected)
 
 def test_piecewise_ds_pls():
+    data1, data2 = read_test_data()
     params = {'method':  'PDS-PLS - PDS using Partial Least Squares', 'win_size': 5, 'pls': True}
     expected = [0.892316, 0.717635, 0.759557, 0.776147, 0.785993, 0.783869, 0.790914]
     cal_tran_helper(data1, data2, params, expected)
 
 def test_ds():
+    data1, data2 = read_test_data()
     params = {'method': 'DS - Direct Standardization', 'fit_intercept':False}
     expected = [0.178577, 0.001241, 0.051551, 0.063651, 0.072738, 0.069143,  0.073129]
     cal_tran_helper(data1, data2, params, expected)
@@ -74,6 +82,7 @@ def test_ds():
     cal_tran_helper(data1, data2, params, expected, single_spect=True)
 
 def test_lasso():
+    data1, data2 = read_test_data()
     params = {'method': 'LASSO DS', 'reg':'lasso'}
     expected = [0.054903, 0.06442 , 0.057151, 0.064025, 0.084927, 0.06608, 0.056687]
     cal_tran_helper(data1, data2, params, expected)
@@ -83,6 +92,7 @@ def test_lasso():
     cal_tran_helper(data1, data2, params, expected, single_spect=True)
 
 def test_fused():
+    data1, data2 = read_test_data()
     ct = cal_tran.admm_ds(reg='fused')
     ct.derive_transform(data1['wvl'], data2['wvl'])
     result = ct.apply_transform(data1['wvl'])
@@ -90,6 +100,7 @@ def test_fused():
     np.testing.assert_array_almost_equal(np.array(result,dtype=float)[:, 4], expected)
 
 def test_rank():
+    data1, data2 = read_test_data()
     ct = cal_tran.admm_ds(reg='rank')
     ct.derive_transform(data1['wvl'], data2['wvl'])
     result = ct.apply_transform(data1['wvl'])
@@ -97,16 +108,19 @@ def test_rank():
     np.testing.assert_array_almost_equal(np.array(result,dtype=float)[:, 4], expected)
 
 def test_ridge():
+    data1, data2 = read_test_data()
     params = {'method': 'Ridge DS', 'reg': 'ridge'}
     expected = [0.080705, 0.058048, 0.057408, 0.058376, 0.064338, 0.05882, 0.058512]
     cal_tran_helper(data1, data2, params, expected)
 
 def test_sp_lr():
+    data1, data2 = read_test_data()
     params = {'method': 'Sparse Low Rank DS', 'reg': 'sp_lr'}
     expected = [0.086601, 0.068787, 0.065989, 0.068998, 0.080721, 0.070023, 0.066837]
     cal_tran_helper(data1, data2, params, expected)
 
 def test_cca():
+    data1, data2 = read_test_data()
     params = {'method': 'CCA - Canonical Correlation Analysis'}
     expected = [0.173499, 0.035199, 0.065695, 0.045576, 0.063046, 0.057604,  0.069411]
     cal_tran_helper(data1, data2, params, expected)
@@ -116,23 +130,26 @@ def test_cca():
     cal_tran_helper(data1, data2, params, expected, single_spect=True)
 
 def test_cca_new():
+    data1, data2 = read_test_data()
     params = {'method': 'New CCA', 'ccatype':'new'}
     expected = [0.102786, -0.047663, -0.014488, -0.036374, -0.01737, -0.02329 , -0.010446]
     cal_tran_helper(data1, data2, params, expected)
 
 def test_ipd_ds():
+    data1, data2 = read_test_data()
     params = {'method':'Incremental Proximal Descent DS'}
     expected = [0.136078,  0.012181,  0.02812,  0.012182, -0.01562, 0.012242,  0.032493]
     cal_tran_helper(data1, data2, params, expected)
 
 def test_forward_backward_ds():
+    data1, data2 = read_test_data()
     params = {'method': 'Forward Backward DS'}
     expected = [0.00015 , 0.00019 , 0.000174, 0.000188, 0.000235, 0.000193,  0.000172]
     cal_tran_helper(data1, data2, params, expected)
 
 def test_prepare_data_no_repeats():
+    data1, data2 = read_test_data()
     a,b = prepare_data(data1, data2, 'Target', 'Target')
     pd.testing.assert_frame_equal(a,data1)
     pd.testing.assert_frame_equal(b, data2)
 
-test_piecewise_ds_pls()

@@ -5,8 +5,8 @@ import libpyhat.regression.local_regression as local_regression
 np.random.seed(1)
 
 
-df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
 def test_local_regression():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
     params = {'fit_intercept': True,
               'positive': False,
               'random_state': 1,
@@ -28,6 +28,7 @@ def test_local_regression():
     np.testing.assert_array_almost_equal(intercepts[0:5], expected_intercepts)
 
 def test_local_parallel():
+    df = pd.read_csv(get_path('test_data.csv'), header=[0, 1])
     params = {'fit_intercept': True,
               'positive': False,
               'random_state': 1,

@@ -42,7 +42,6 @@ jobs:
         run: |
           conda install pip setuptools
           conda install --quiet pytest pytest-cov nbsphinx
-          pip install coveralls
           python setup.py install
       - name: Check build environment
         run: |
@@ -55,6 +54,8 @@ jobs:
         #if: ${{ env.GIT_BRANCH_NAME == 'master' }}
         run: |
           echo "Deploying!"
-          bash deployment/deploy.sh $PYTHON_VERSION
-        shell: bash
+          conda deactivate
+          conda install conda-build anaconda-client
+          conda config --set anaconda_upload yes
+          conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION recipe
       

@@ -42,6 +42,7 @@ jobs:
         run: |
           conda install pip setuptools
           conda install --quiet pytest pytest-cov nbsphinx
+          pip install coveralls
           python setup.py install
       - name: Check build environment
         run: |
@@ -49,22 +50,11 @@ jobs:
           conda info
       - name: Test Python Package
         run: |
-          pytest --cov libpyhat --cov-report=xml
-      - name: Upload Coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          verbose: true
-      - name: Deploy on the master branch
-        if: ${{ env.GIT_BRANCH_NAME == 'master' }}
+          pytest --cov libpyhat
+      - name: Deploy
+        #if: ${{ env.GIT_BRANCH_NAME == 'master' }}
         run: |
-          echo 'We are on the master branch!'
+          echo "Deploying!"
           bash deployment/deploy.sh $PYTHON_VERSION
         shell: bash
-      - name: Other branch message
-        if: ${{ env.GIT_BRANCH_NAME != 'master' }}
-        run: echo 'Not on the master branch - not deploying'
       
-          
-    

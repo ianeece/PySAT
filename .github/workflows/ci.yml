@@ -40,7 +40,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Python Package
         run: |
-          conda install pip setuptools conda-build
+          conda install pip setuptools
           conda install --quiet pytest pytest-cov nbsphinx
           python setup.py install
       - name: Check build environment
@@ -50,6 +50,8 @@ jobs:
       - name: Test Python Package
         run: |
           pytest --cov libpyhat
+      - name: Print working directory
+        run: echo pwd
 #       - name: Deploy
 #         if: ${{ env.GIT_BRANCH_NAME == 'master' }}
 #         run: |
@@ -59,20 +61,5 @@ jobs:
 #           conda config --set anaconda_upload yes
 #           conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION ../../recipe
               
-      - name: Deploy
-        # You may pin to the exact commit or the version.
-        # uses: uibcdf/action-build-and-upload-conda-packages@f1d3918a219be72a21648fc935e30e5c8b9079fe
-        uses: uibcdf/action-build-and-upload-conda-packages@v1.1-beta.1
-        with:
-          # Path to the directory in the repository where the meta.yaml file is located.
-          meta_yaml_dir: recipe
-          # Python version of the package to be built.
-          python-version: $PYTHON_VERSION
-          # Name of the Anaconda user or organization where the conda package will be published.
-          user: usgs-astrogeology
-          # Token to access to anaconda cloud.
-          token: ${{ secrets.CONDA_UPLOAD_TOKEN }}
-      - name: Other branch message
-        if: ${{ env.GIT_BRANCH_NAME != 'master' }}
-        run: echo 'Not on the master branch - not deploying'
+
       

@@ -28,7 +28,7 @@ jobs:
         run: echo "Branch name ${GIT_BRANCH_NAME}"
       - uses: actions/checkout@v2
       - name: Print working directory
-        run: echo pwd
+        run: pwd
       - name: Setup conda env
         uses: conda-incubator/setup-miniconda@v2
         with: 

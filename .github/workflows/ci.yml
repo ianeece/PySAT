@@ -57,7 +57,7 @@ jobs:
           conda deactivate
           conda install conda-build anaconda-client
           conda config --set anaconda_upload yes
-          conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION recipe
+          conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION ../../recipe
       - name: Other branch message
         if: ${{ env.GIT_BRANCH_NAME != 'master' }}
         run: echo 'Not on the master branch - not deploying'

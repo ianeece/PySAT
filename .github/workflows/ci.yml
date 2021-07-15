@@ -60,7 +60,9 @@ jobs:
           conda config --set anaconda_upload yes
           pwd
           ls -a
-          conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION ../../recipe
+          echo "Here is what the build command (without token) looks like:"
+          echo conda build --python $PYTHON_VERSION recipe
+          conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION recipe
               
 
       

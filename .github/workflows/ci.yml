@@ -38,6 +38,7 @@ jobs:
           activate-environment: test_env
           environment-file: environment.yml
           python-version: ${{ matrix.python-version }}
+          fetch-depth: '2'
       - name: Install Python Package
         run: |
           conda install pip setuptools

@@ -61,8 +61,8 @@ jobs:
           pwd
           ls -a
           echo "Here is what the build command (without token) looks like:"
-          echo conda build --python $PYTHON_VERSION recipe
-          conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION recipe
+          echo conda build --python ${{ matrix.python-version }} recipe
+          conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python ${{ matrix.python-version }} recipe
               
 
       

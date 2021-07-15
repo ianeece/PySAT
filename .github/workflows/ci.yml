@@ -26,11 +26,7 @@ jobs:
         uses: EthanSK/git-branch-name-action@v1
       - name: Echo the branch name
         run: echo "Branch name ${GIT_BRANCH_NAME}"
-      - uses: actions/checkout@v2
-      - name: Print working directory
-        run: |
-          pwd
-          ls -a
+      - uses: actions/checkout@v2     
       - name: Setup conda env
         uses: conda-incubator/setup-miniconda@v2
         with: 
@@ -55,14 +51,16 @@ jobs:
         run: |
           pytest --cov libpyhat
 
-#       - name: Deploy
-#         if: ${{ env.GIT_BRANCH_NAME == 'master' }}
-#         run: |
-#           echo "We are on the master branch - deploying!"
-#           conda deactivate
-#           conda install conda-build anaconda-client
-#           conda config --set anaconda_upload yes
-#           conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION ../../recipe
+      - name: Deploy
+        if: ${{ env.GIT_BRANCH_NAME == 'master' }}
+        run: |
+          echo "We are on the master branch - deploying!"
+          conda deactivate
+          conda install conda-build anaconda-client
+          conda config --set anaconda_upload yes
+          pwd
+          ls -a
+          conda build --token ${{ secrets.CONDA_UPLOAD_TOKEN }} --python $PYTHON_VERSION ../../recipe
               
 
       
